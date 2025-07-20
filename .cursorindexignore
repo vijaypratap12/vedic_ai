@@ -1,0 +1,96 @@
+# Dependencies - don't index third-party code
+node_modules/
+/.pnp
+.pnp.js
+
+# Build outputs - generated files
+/build
+/dist
+
+# Environment files - sensitive data
+.env*
+
+# Log files - not needed for indexing
+*.log
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+lerna-debug.log*
+
+# Test coverage - generated reports
+coverage/
+*.lcov
+.nyc_output
+
+# Cache and temporary files
+.npm
+.eslintcache
+.rpt2_cache/
+.rts2_cache_cjs/
+.rts2_cache_es/
+.rts2_cache_umd/
+tmp/
+temp/
+
+# OS and system files
+.DS_Store
+.DS_Store?
+._*
+.Spotlight-V100
+.Trashes
+ehthumbs.db
+Thumbs.db
+Desktop.ini
+
+# IDE configuration
+.vscode/
+.idea/
+.cursor/
+
+# Backup and swap files
+*.swp
+*.swo
+*~
+*.bak
+*.backup
+*.tmp
+
+# Package manager files
+jspm_packages/
+.yarn-integrity
+*.tgz
+
+# Build artifacts
+*.tsbuildinfo
+
+# Serverless
+.serverless/
+
+# Cache directories
+.fusebox/
+.dynamodb/
+
+# Deployment artifacts
+.netlify
+.vercel
+
+# Lock files - large and not needed for indexing
+package-lock.json
+yarn.lock
+
+# Media files (if any) - usually large
+*.jpg
+*.jpeg
+*.png
+*.gif
+*.svg
+*.ico
+*.webp
+*.mp4
+*.mov
+*.avi
+*.pdf
+
+# Documentation builds
+/docs/build
+/docs/dist 
