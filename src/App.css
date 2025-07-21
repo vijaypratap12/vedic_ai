@@ -230,3 +230,83 @@ main {
     padding: 1rem 0;
   }
 } 
+
+/* Botpress Chatbot Custom Styling */
+#bp-widget {
+  z-index: 9999 !important;
+}
+
+#bp-widget .bpw-chat-container {
+  font-family: 'Inter', sans-serif !important;
+  box-shadow: 0 8px 32px rgba(0, 0, 0, 0.1) !important;
+  border-radius: 12px !important;
+  border: 1px solid rgba(255, 255, 255, 0.1) !important;
+}
+
+#bp-widget .bpw-header {
+  background: linear-gradient(135deg, #8B4513, #CD853F) !important;
+  color: white !important;
+  border-radius: 12px 12px 0 0 !important;
+  padding: 1rem !important;
+}
+
+#bp-widget .bpw-header-title {
+  font-weight: 600 !important;
+  font-size: 1rem !important;
+}
+
+#bp-widget .bpw-floating-button {
+  background: linear-gradient(135deg, #8B4513, #CD853F) !important;
+  box-shadow: 0 4px 16px rgba(139, 69, 19, 0.3) !important;
+  border: none !important;
+  width: 60px !important;
+  height: 60px !important;
+}
+
+#bp-widget .bpw-floating-button:hover {
+  transform: scale(1.05) !important;
+  transition: transform 0.2s ease !important;
+}
+
+#bp-widget .bpw-chat-bubble-content {
+  background: #f8f9fa !important;
+  border-radius: 8px !important;
+  font-family: 'Inter', sans-serif !important;
+}
+
+#bp-widget .bpw-from-bot .bpw-chat-bubble .bpw-chat-bubble-content {
+  background: linear-gradient(135deg, #8B4513, #CD853F) !important;
+  color: white !important;
+}
+
+#bp-widget .bpw-from-user .bpw-chat-bubble .bpw-chat-bubble-content {
+  background: #e3f2fd !important;
+  color: #1565c0 !important;
+}
+
+#bp-widget .bpw-composer {
+  border-top: 1px solid #e0e0e0 !important;
+  background: white !important;
+}
+
+#bp-widget .bpw-composer-input {
+  font-family: 'Inter', sans-serif !important;
+  border: 1px solid #e0e0e0 !important;
+  border-radius: 20px !important;
+  padding: 10px 15px !important;
+}
+
+#bp-widget .bpw-send-button {
+  background: linear-gradient(135deg, #8B4513, #CD853F) !important;
+  border-radius: 50% !important;
+  border: none !important;
+}
+
+/* Mobile responsiveness */
+@media (max-width: 768px) {
+  #bp-widget .bpw-chat-container {
+    width: 100% !important;
+    height: 100% !important;
+    border-radius: 0 !important;
+  }
+} 
