@@ -6,15 +6,8 @@ import {
   BookOpen, 
   Brain, 
   Users, 
-  Code, 
-  Palette,
-  Heart,
   Star,
-  Github,
-  Linkedin,
-  ExternalLink,
-  User,
-  FileText
+  User
 } from 'lucide-react';
 
 const Team = () => {

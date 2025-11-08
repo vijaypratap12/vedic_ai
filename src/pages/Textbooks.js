@@ -1,9 +1,7 @@
 import React, { useState } from 'react';
 import { 
-  BookOpen, 
   Download, 
   Search, 
-  Filter, 
   GraduationCap,
   FileText,
   CheckCircle,
