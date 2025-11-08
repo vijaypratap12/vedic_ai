@@ -15,6 +15,9 @@
 // Background Images
 export { default as heroBackground } from './backgrounds/bg_home_page.png';
 
+// Logos
+export { default as logo } from './logos/logo vedic.png';
+
 // Icons
 // export { default as logoIcon } from './icons/logo.svg';
 // export { default as ayurvedaIcon } from './icons/ayurveda-icon.svg';

@@ -2,26 +2,29 @@ import React, { useState } from 'react';
 import { 
   Search, 
   Filter, 
-  Download, 
   FileText, 
   Calendar, 
   MapPin, 
   User, 
   Eye,
-  Upload,
   BookOpen,
   Award,
-  TrendingUp,
-  Database,
   Star
 } from 'lucide-react';
+import Reader from '../components/Reader';
 
 const Research = () => {
   const [searchTerm, setSearchTerm] = useState('');
   const [selectedCategory, setSelectedCategory] = useState('all');
   const [selectedYear, setSelectedYear] = useState('all');
   const [selectedInstitution, setSelectedInstitution] = useState('all');
-  const [showSubmissionForm, setShowSubmissionForm] = useState(false);
+  const [readerOpen, setReaderOpen] = useState(false);
+  const [selectedPaper, setSelectedPaper] = useState(null);
+
+  const openReader = (paper) => {
+    setSelectedPaper(paper);
+    setReaderOpen(true);
+  };
 
   const years = ['all', '2024', '2023', '2022', '2021', '2020', '2019', '2018'];
 
@@ -147,20 +150,6 @@ const Research = () => {
               Comprehensive database of Ayurvedic surgery research, theses, and academic publications 
               from leading institutions across India and internationally.
             </p>
-            <div className="hero-stats">
-              <div className="stat-item">
-                <span className="stat-number">500+</span>
-                <span className="stat-label">Research Papers</span>
-              </div>
-              <div className="stat-item">
-                <span className="stat-number">150+</span>
-                <span className="stat-label">Theses</span>
-              </div>
-              <div className="stat-item">
-                <span className="stat-number">50+</span>
-                <span className="stat-label">Institutions</span>
-              </div>
-            </div>
           </div>
         </div>
       </section>
@@ -232,13 +221,6 @@ const Research = () => {
                   <Filter size={16} />
                   Apply Filters
                 </button>
-                <button 
-                  className="btn btn-secondary"
-                  onClick={() => setShowSubmissionForm(true)}
-                >
-                  <Upload size={16} />
-                  Submit Research
-                </button>
               </div>
             </div>
           </div>
@@ -278,7 +260,14 @@ const Research = () => {
                 <div className="research-category">
                   <span className="badge badge-info">{thesis.category}</span>
                 </div>
-                <button className="btn btn-outline btn-small">
+                <button 
+                  className="btn btn-outline btn-small"
+                  onClick={() => openReader({
+                    title: thesis.title,
+                    authors: [thesis.author],
+                    institution: thesis.institution
+                  })}
+                >
                   <Eye size={16} />
                   View Details
                 </button>
@@ -326,10 +315,6 @@ const Research = () => {
                       <Eye size={14} />
                       <span>{paper.views} views</span>
                     </div>
-                    <div className="stat">
-                      <Download size={14} />
-                      <span>{paper.downloadCount} downloads</span>
-                    </div>
                   </div>
                 </div>
                 
@@ -368,13 +353,12 @@ const Research = () => {
                 </div>
                 
                 <div className="paper-actions">
-                  <button className="btn btn-primary">
+                  <button 
+                    className="btn btn-primary"
+                    onClick={() => openReader(paper)}
+                  >
                     <Eye size={16} />
                     View Full Paper
-                  </button>
-                  <button className="btn btn-outline">
-                    <Download size={16} />
-                    Download PDF
                   </button>
                   <button className="btn btn-outline">
                     <BookOpen size={16} />
@@ -396,132 +380,14 @@ const Research = () => {
         </div>
       </section>
 
-      {/* Research Statistics */}
-      <section className="section section-alt">
-        <div className="container">
-          <div className="content-header">
-            <h2>Repository Statistics</h2>
-            <p>Insights into research trends and institutional contributions</p>
-          </div>
-          
-          <div className="stats-dashboard">
-            <div className="grid grid-4">
-              <div className="dashboard-stat card">
-                <div className="stat-icon">
-                  <Database size={24} />
-                </div>
-                <div className="stat-content">
-                  <span className="stat-number">500+</span>
-                  <span className="stat-label">Total Papers</span>
-                  <span className="stat-trend">+12% this year</span>
-                </div>
-              </div>
-              
-              <div className="dashboard-stat card">
-                <div className="stat-icon">
-                  <TrendingUp size={24} />
-                </div>
-                <div className="stat-content">
-                  <span className="stat-number">50K+</span>
-                  <span className="stat-label">Total Downloads</span>
-                  <span className="stat-trend">+25% this month</span>
-                </div>
-              </div>
-              
-              <div className="dashboard-stat card">
-                <div className="stat-icon">
-                  <MapPin size={24} />
-                </div>
-                <div className="stat-content">
-                  <span className="stat-number">50+</span>
-                  <span className="stat-label">Institutions</span>
-                  <span className="stat-trend">+8 new colleges</span>
-                </div>
-              </div>
-              
-              <div className="dashboard-stat card">
-                <div className="stat-icon">
-                  <User size={24} />
-                </div>
-                <div className="stat-content">
-                  <span className="stat-number">200+</span>
-                  <span className="stat-label">Authors</span>
-                  <span className="stat-trend">Active contributors</span>
-                </div>
-              </div>
-            </div>
-          </div>
-        </div>
-      </section>
-
-      {/* Submission Portal */}
-      {showSubmissionForm && (
-        <div className="submission-modal">
-          <div className="modal-content">
-            <div className="modal-header">
-              <h3>Submit Your Research</h3>
-              <button 
-                className="modal-close"
-                onClick={() => setShowSubmissionForm(false)}
-              >
-                ×
-              </button>
-            </div>
-            <form className="submission-form">
-              <div className="form-group">
-                <label className="form-label">Research Title</label>
-                <input type="text" className="form-control" placeholder="Enter research title" />
-              </div>
-              
-              <div className="form-group">
-                <label className="form-label">Authors</label>
-                <input type="text" className="form-control" placeholder="Author names (comma separated)" />
-              </div>
-              
-              <div className="form-group">
-                <label className="form-label">Institution</label>
-                <input type="text" className="form-control" placeholder="Institution name" />
-              </div>
-              
-              <div className="form-group">
-                <label className="form-label">Category</label>
-                <select className="form-control">
-                  <option>Select category</option>
-                  <option value="thesis">Thesis</option>
-                  <option value="research-paper">Research Paper</option>
-                  <option value="case-study">Case Study</option>
-                  <option value="review-article">Review Article</option>
-                  <option value="clinical-trial">Clinical Trial</option>
-                </select>
-              </div>
-              
-              <div className="form-group">
-                <label className="form-label">Abstract</label>
-                <textarea className="form-control textarea" placeholder="Enter abstract"></textarea>
-              </div>
-              
-              <div className="form-group">
-                <label className="form-label">Keywords</label>
-                <input type="text" className="form-control" placeholder="Keywords (comma separated)" />
-              </div>
-              
-              <div className="form-group">
-                <label className="form-label">Upload PDF</label>
-                <input type="file" className="form-control" accept=".pdf" />
-              </div>
-              
-              <div className="form-actions">
-                <button type="button" className="btn btn-outline" onClick={() => setShowSubmissionForm(false)}>
-                  Cancel
-                </button>
-                <button type="submit" className="btn btn-primary">
-                  Submit Research
-                </button>
-              </div>
-            </form>
-          </div>
-        </div>
-      )}
+      {/* Reader Component */}
+      <Reader
+        isOpen={readerOpen}
+        onClose={() => setReaderOpen(false)}
+        title={selectedPaper?.title || 'Research Paper'}
+        author={selectedPaper?.authors?.join(', ') || ''}
+        content={null}
+      />
     </div>
   );
 };

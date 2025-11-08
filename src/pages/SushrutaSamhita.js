@@ -2,28 +2,21 @@ import React, { useState } from 'react';
 import { 
   BookOpen, 
   Search, 
-  Filter, 
-  Download, 
   Volume2, 
-  Eye, 
   Languages,
-  ChevronRight,
-  ChevronDown,
-  Star,
-  Heart,
-  Share
+  Star
 } from 'lucide-react';
+import Reader from '../components/Reader';
 
 const SushrutaSamhita = () => {
-  const [selectedLanguage, setSelectedLanguage] = useState('english');
-  const [selectedChapter, setSelectedChapter] = useState(null);
   const [searchTerm, setSearchTerm] = useState('');
+  const [readerOpen, setReaderOpen] = useState(false);
+  const [selectedContent, setSelectedContent] = useState(null);
 
-  const languages = [
-    { code: 'sanskrit', label: 'Sanskrit', flag: '🕉️' },
-    { code: 'hindi', label: 'Hindi', flag: '🇮🇳' },
-    { code: 'english', label: 'English', flag: '🇺🇸' }
-  ];
+  const openReader = (content) => {
+    setSelectedContent(content);
+    setReaderOpen(true);
+  };
 
   const sthanas = [
     {
@@ -91,14 +84,6 @@ const SushrutaSamhita = () => {
     }
   ];
 
-  const handleLanguageChange = (language) => {
-    setSelectedLanguage(language);
-  };
-
-  const toggleChapter = (chapterId) => {
-    setSelectedChapter(selectedChapter === chapterId ? null : chapterId);
-  };
-
   return (
     <div className="sushruta-samhita-page">
       {/* Hero Section */}
@@ -110,21 +95,9 @@ const SushrutaSamhita = () => {
               <br />Sushruta Samhita Explorer
             </h1>
             <p>
-              Explore the timeless wisdom of Maharishi Sushruta through our interactive, 
-              trilingual digital archive with modern commentary and illustrations.
+              Explore the timeless wisdom of Maharishi Sushruta through our interactive 
+              digital archive with modern commentary and illustrations.
             </p>
-            <div className="language-switcher">
-              <span>Select Language:</span>
-              {languages.map((lang) => (
-                <button
-                  key={lang.code}
-                  className={`language-btn ${selectedLanguage === lang.code ? 'active' : ''}`}
-                  onClick={() => handleLanguageChange(lang.code)}
-                >
-                  {lang.flag} {lang.label}
-                </button>
-              ))}
-            </div>
           </div>
         </div>
       </section>
@@ -142,20 +115,6 @@ const SushrutaSamhita = () => {
                 value={searchTerm}
                 onChange={(e) => setSearchTerm(e.target.value)}
               />
-            </div>
-            <div className="navigation-controls">
-              <button className="btn btn-outline">
-                <Filter size={16} />
-                Advanced Filter
-              </button>
-              <button className="btn btn-outline">
-                <Download size={16} />
-                Download Chapter
-              </button>
-              <button className="btn btn-outline">
-                <Share size={16} />
-                Share
-              </button>
             </div>
           </div>
         </div>
@@ -180,7 +139,14 @@ const SushrutaSamhita = () => {
                   <small>{content.chapter}</small>
                 </div>
                 <div className="card-actions">
-                  <button className="btn btn-primary btn-small">
+                  <button 
+                    className="btn btn-primary btn-small"
+                    onClick={() => openReader({
+                      title: content.title,
+                      subtitle: content.subtitle,
+                      chapter: content.chapter
+                    })}
+                  >
                     <BookOpen size={16} />
                     Read Chapter
                   </button>
@@ -212,19 +178,7 @@ const SushrutaSamhita = () => {
                       <span className="sanskrit">{sthana.name}</span>
                     </h3>
                     <p className="sthana-description">{sthana.description}</p>
-                    <div className="chapter-count">
-                      <span className="badge badge-primary">{sthana.chapters} Chapters</span>
-                    </div>
                   </div>
-                  <button
-                    className="expand-btn"
-                    onClick={() => toggleChapter(sthana.id)}
-                  >
-                    {selectedChapter === sthana.id ? 
-                      <ChevronDown size={20} /> : 
-                      <ChevronRight size={20} />
-                    }
-                  </button>
                 </div>
                 
                 <div className="sthana-topics">
@@ -238,38 +192,16 @@ const SushrutaSamhita = () => {
                   </div>
                 </div>
 
-                {selectedChapter === sthana.id && (
-                  <div className="chapter-list">
-                    <h5>Chapters:</h5>
-                    <div className="chapters-grid">
-                      {Array.from({ length: sthana.chapters }, (_, i) => (
-                        <div key={i} className="chapter-item">
-                          <span className="chapter-number">Chapter {i + 1}</span>
-                          <div className="chapter-actions">
-                            <button className="btn-icon">
-                              <Eye size={14} />
-                            </button>
-                            <button className="btn-icon">
-                              <Download size={14} />
-                            </button>
-                            <button className="btn-icon">
-                              <Heart size={14} />
-                            </button>
-                          </div>
-                        </div>
-                      ))}
-                    </div>
-                  </div>
-                )}
-
                 <div className="sthana-actions">
-                  <button className="btn btn-primary">
+                  <button 
+                    className="btn btn-primary"
+                    onClick={() => openReader({
+                      title: sthana.name,
+                      subtitle: sthana.description
+                    })}
+                  >
                     <BookOpen size={16} />
                     Start Reading
-                  </button>
-                  <button className="btn btn-outline">
-                    <Download size={16} />
-                    Download PDF
                   </button>
                 </div>
               </div>
@@ -351,6 +283,15 @@ const SushrutaSamhita = () => {
           </div>
         </div>
       </section>
+
+      {/* Reader Component */}
+      <Reader
+        isOpen={readerOpen}
+        onClose={() => setReaderOpen(false)}
+        title={selectedContent?.title || 'Sushruta Samhita'}
+        author="Maharishi Sushruta"
+        content={null}
+      />
     </div>
   );
 };

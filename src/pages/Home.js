@@ -11,7 +11,6 @@ import {
   ArrowRight,
   Heart,
   Shield,
-  Linkedin,
   Mail,
   Activity,
   Zap,
@@ -344,14 +343,14 @@ const Home = () => {
                 </p>
               </blockquote>
               <div className="founder-social">
-                <a href="mailto:contact@vedicsurgery.com" className="social-link">
+                <a href="mailto:vedicsurgery@gmail.com" className="social-link">
                   <Mail size={20} />
                   <span>Get in Touch</span>
                 </a>
-                <button className="social-link" onClick={() => window.alert('LinkedIn profile coming soon!')}>
+                {/* <button className="social-link" onClick={() => window.alert('LinkedIn profile coming soon!')}>
                   <Linkedin size={20} />
                   <span>Connect on LinkedIn</span>
-                </button>
+                </button> */}
               </div>
             </div>
           </div>

@@ -1,22 +1,27 @@
 import React, { useState } from 'react';
 import { 
-  Download, 
   Search, 
   GraduationCap,
-  FileText,
   CheckCircle,
   Clock,
   Star,
   Eye,
-  Users,
   Award,
   Languages
 } from 'lucide-react';
+import Reader from '../components/Reader';
 
 const Textbooks = () => {
   const [selectedLevel, setSelectedLevel] = useState('ug');
   const [selectedSubject, setSelectedSubject] = useState('all');
   const [searchTerm, setSearchTerm] = useState('');
+  const [readerOpen, setReaderOpen] = useState(false);
+  const [selectedBook, setSelectedBook] = useState(null);
+
+  const openReader = (book) => {
+    setSelectedBook(book);
+    setReaderOpen(true);
+  };
 
   const textbookCategories = {
     ug: {
@@ -235,12 +240,6 @@ const Textbooks = () => {
                 </div>
                 <div className="stat-item">
                   <span className="stat-number">
-                    {currentBooks.reduce((sum, book) => sum + book.downloadCount, 0).toLocaleString()}
-                  </span>
-                  <span className="stat-label">Downloads</span>
-                </div>
-                <div className="stat-item">
-                  <span className="stat-number">
                     {(currentBooks.reduce((sum, book) => sum + book.rating, 0) / currentBooks.length).toFixed(1)}
                   </span>
                   <span className="stat-label">Avg Rating</span>
@@ -324,22 +323,15 @@ const Textbooks = () => {
                     </div>
                   </div>
 
-                  <div className="book-stats">
-                    <div className="stat">
-                      <Download size={16} />
-                      <span>{book.downloadCount.toLocaleString()} downloads</span>
-                    </div>
-                  </div>
                 </div>
 
                 <div className="book-actions">
-                  <button className="btn btn-primary">
+                  <button 
+                    className="btn btn-primary"
+                    onClick={() => openReader(book)}
+                  >
                     <Eye size={16} />
                     Read Online
-                  </button>
-                  <button className="btn btn-outline">
-                    <Download size={16} />
-                    Download PDF
                   </button>
                   <button className="btn btn-outline">
                     <Languages size={16} />
@@ -401,82 +393,14 @@ const Textbooks = () => {
         </div>
       </section>
 
-      {/* Additional Resources */}
-      <section className="section">
-        <div className="container">
-          <div className="content-header">
-            <h2>Additional Learning Resources</h2>
-            <p>Supplementary materials to enhance your learning experience</p>
-          </div>
-          
-          <div className="grid grid-3">
-            <div className="resource-card card">
-              <div className="card-icon">
-                <FileText size={24} />
-              </div>
-              <h4>Study Guides</h4>
-              <p>Chapter-wise summary and key points for quick revision</p>
-              <button className="btn btn-outline">Access Guides</button>
-            </div>
-            
-            <div className="resource-card card">
-              <div className="card-icon">
-                <Users size={24} />
-              </div>
-              <h4>Discussion Groups</h4>
-              <p>Join study groups and discuss concepts with fellow students</p>
-              <button className="btn btn-outline">Join Groups</button>
-            </div>
-            
-            <div className="resource-card card">
-              <div className="card-icon">
-                <Award size={24} />
-              </div>
-              <h4>Assessment Tests</h4>
-              <p>Practice tests and quizzes to evaluate your understanding</p>
-              <button className="btn btn-outline">Take Tests</button>
-            </div>
-          </div>
-        </div>
-      </section>
-
-      {/* Author Information */}
-      <section className="section section-alt">
-        <div className="container">
-          <div className="author-section">
-            <div className="content-header">
-              <h2>About the Authors</h2>
-              <p>Learn about the experts behind these comprehensive textbooks</p>
-            </div>
-            
-            <div className="grid grid-2">
-              <div className="author-card card">
-                <h4>Dr. Sameep Singh</h4>
-                <p className="author-title">BAMS, PG Scholar (MS Shalya Tantra)</p>
-                <p className="author-institution">Quadra Institute of Ayurveda & Hospital, Roorkee</p>
-                <p>Lead author and project founder with expertise in classical Ayurvedic surgery and modern integration.</p>
-                <div className="author-specialties">
-                  <span className="specialty-tag">Classical Surgery</span>
-                  <span className="specialty-tag">Modern Integration</span>
-                  <span className="specialty-tag">AI in Medicine</span>
-                </div>
-              </div>
-              
-              <div className="author-card card">
-                <h4>Dr. Saurabh Kumar</h4>
-                <p className="author-title">BAMS, MS (Shalya Tantra)</p>
-                <p className="author-institution">Chief Clinical Advisor</p>
-                <p>Experienced practitioner and educator with extensive clinical experience in Ayurvedic surgical procedures.</p>
-                <div className="author-specialties">
-                  <span className="specialty-tag">Clinical Practice</span>
-                  <span className="specialty-tag">Surgical Techniques</span>
-                  <span className="specialty-tag">Medical Education</span>
-                </div>
-              </div>
-            </div>
-          </div>
-        </div>
-      </section>
+      {/* Reader Component */}
+      <Reader
+        isOpen={readerOpen}
+        onClose={() => setReaderOpen(false)}
+        title={selectedBook?.title || 'Textbook'}
+        author={selectedBook?.author || ''}
+        content={null}
+      />
     </div>
   );
 };

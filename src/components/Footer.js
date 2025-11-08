@@ -64,9 +64,9 @@ const Footer = () => {
             BAMS, PG Scholar (MS Shalya Tantra)<br />
             Quadra Institute of Ayurveda & Hospital</p>
             
-            <p><strong>Dr. Saurabh Kumar</strong><br />
-            BAMS, MS (Shalya Tantra)<br />
-            Chief Clinical Advisor</p>
+            <p><strong>Vijay Pratap Singh</strong><br />
+            Lead Developer, Product Engineer<br />
+            C# Corner MVP, Gen AI Leader</p>
           </div>
         </div>
 
