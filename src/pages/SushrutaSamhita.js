@@ -18,7 +18,6 @@ const SushrutaSamhita = () => {
   const [selectedLanguage, setSelectedLanguage] = useState('english');
   const [selectedChapter, setSelectedChapter] = useState(null);
   const [searchTerm, setSearchTerm] = useState('');
-  const [activeSection, setActiveSection] = useState('sthana');
 
   const languages = [
     { code: 'sanskrit', label: 'Sanskrit', flag: '🕉️' },

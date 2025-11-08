@@ -9,7 +9,6 @@ import {
   Users,
   BookOpen,
   Search,
-  Filter,
   ExternalLink,
   Share,
   Heart,
@@ -21,17 +20,6 @@ import {
 const News = () => {
   const [selectedCategory, setSelectedCategory] = useState('all');
   const [searchTerm, setSearchTerm] = useState('');
-
-  const newsCategories = [
-    'all',
-    'research-breakthrough',
-    'policy-updates',
-    'conferences',
-    'awards-recognition',
-    'international-news',
-    'technology-innovation',
-    'education-updates'
-  ];
 
   const newsArticles = [
     {
@@ -241,14 +229,14 @@ const News = () => {
                 <span>BREAKING NEWS</span>
               </div>
               <div className="breaking-content">
-                <marquee>
+                <div className="breaking-news-scroll">
                   {breakingNews.map((news, index) => (
                     <span key={news.id}>
                       {news.title}
                       {index < breakingNews.length - 1 && ' • '}
                     </span>
                   ))}
-                </marquee>
+                </div>
               </div>
             </div>
           </div>

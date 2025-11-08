@@ -11,22 +11,12 @@ import {
   Quote,
   Download,
   Share,
-  Search,
-  Filter
+  Search
 } from 'lucide-react';
 
 const Biography = () => {
   const [selectedCategory, setSelectedCategory] = useState('all');
   const [searchTerm, setSearchTerm] = useState('');
-
-  const categories = [
-    'all',
-    'contemporary-masters',
-    'classical-scholars',
-    'modern-innovators',
-    'international-pioneers',
-    'young-achievers'
-  ];
 
   const biographies = [
     {

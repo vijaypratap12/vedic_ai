@@ -9,8 +9,6 @@ import {
   BookOpen,
   Zap,
   Award,
-  BarChart3,
-  Settings,
   Download,
   Lock,
   CheckCircle,
@@ -21,16 +19,6 @@ import {
 const Simulations = () => {
   const [selectedCategory, setSelectedCategory] = useState('all');
   const [selectedDifficulty, setSelectedDifficulty] = useState('all');
-
-  const simulationCategories = [
-    'all',
-    'kshara-sutra',
-    'agnikarma',
-    'vrana-management',
-    'shastra-karma',
-    'yantra-karma',
-    'diagnostic-skills'
-  ];
 
   const simulations = [
     {

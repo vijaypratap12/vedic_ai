@@ -21,16 +21,6 @@ const Jurisprudence = () => {
   const [selectedCategory, setSelectedCategory] = useState('all');
   const [searchTerm, setSearchTerm] = useState('');
 
-  const legalCategories = [
-    'all',
-    'ncism-guidelines',
-    'state-regulations',
-    'surgical-permissions',
-    'ethical-framework',
-    'court-rulings',
-    'consent-forms'
-  ];
-
   const states = [
     'all', 'Andhra Pradesh', 'Assam', 'Bihar', 'Chhattisgarh', 'Delhi', 
     'Gujarat', 'Haryana', 'Karnataka', 'Kerala', 'Madhya Pradesh', 

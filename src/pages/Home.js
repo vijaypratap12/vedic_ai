@@ -9,10 +9,6 @@ import {
   Globe, 
   Award,
   ArrowRight,
-  Play,
-  Download,
-  Star,
-  TrendingUp,
   Heart,
   Shield,
   Linkedin,
@@ -352,10 +348,10 @@ const Home = () => {
                   <Mail size={20} />
                   <span>Get in Touch</span>
                 </a>
-                <a href="#" className="social-link">
+                <button className="social-link" onClick={() => window.alert('LinkedIn profile coming soon!')}>
                   <Linkedin size={20} />
                   <span>Connect on LinkedIn</span>
-                </a>
+                </button>
               </div>
             </div>
           </div>

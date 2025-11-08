@@ -21,12 +21,7 @@ const Research = () => {
   const [selectedCategory, setSelectedCategory] = useState('all');
   const [selectedYear, setSelectedYear] = useState('all');
   const [selectedInstitution, setSelectedInstitution] = useState('all');
-  const [currentPage, setCurrentPage] = useState(1);
   const [showSubmissionForm, setShowSubmissionForm] = useState(false);
-
-  const researchCategories = [
-    'all', 'thesis', 'research-paper', 'case-study', 'review-article', 'clinical-trial'
-  ];
 
   const years = ['all', '2024', '2023', '2022', '2021', '2020', '2019', '2018'];
 

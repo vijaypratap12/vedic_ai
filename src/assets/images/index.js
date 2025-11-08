@@ -27,5 +27,6 @@ export { default as founderPhoto } from './team/sameep_singh.JPG';
 // export { default as manuscriptImage } from './research/sushruta-manuscript.jpg';
 
 // Uncomment the exports above as you add images to the respective folders
-export default {};
+const imageAssets = {};
+export default imageAssets;
 

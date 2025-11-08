@@ -2107,4 +2107,25 @@ div, section, article, main, header, footer, nav {
   .filter-btn {
     width: 100%;
   }
+}
+
+/* Breaking News Scroll Animation */
+.breaking-news-scroll {
+  display: inline-block;
+  white-space: nowrap;
+  animation: scroll-left 30s linear infinite;
+}
+
+@keyframes scroll-left {
+  0% {
+    transform: translateX(100%);
+  }
+  100% {
+    transform: translateX(-100%);
+  }
+}
+
+.breaking-content {
+  overflow: hidden;
+  width: 100%;
 } 

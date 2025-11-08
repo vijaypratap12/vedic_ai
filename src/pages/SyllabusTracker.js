@@ -7,7 +7,6 @@ import {
   Target,
   TrendingUp,
   Award,
-  Users,
   FileText,
   Download,
   Play,
@@ -19,7 +18,6 @@ import {
 const SyllabusTracker = () => {
   const [selectedLevel, setSelectedLevel] = useState('ug');
   const [selectedYear, setSelectedYear] = useState('1');
-  const [viewMode, setViewMode] = useState('overview');
 
   const syllabusData = {
     ug: {

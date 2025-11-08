@@ -7,9 +7,7 @@ import {
   MessageCircle, 
   Share, 
   Search,
-  Filter,
   BookOpen,
-  TrendingUp,
   Star,
   Clock,
   Tag,
@@ -19,18 +17,6 @@ import {
 const Blog = () => {
   const [selectedCategory, setSelectedCategory] = useState('all');
   const [searchTerm, setSearchTerm] = useState('');
-  const [currentPage, setCurrentPage] = useState(1);
-
-  const categories = [
-    'all',
-    'research-updates',
-    'surgical-techniques',
-    'case-studies',
-    'modern-integration',
-    'guest-posts',
-    'news-updates',
-    'educational-content'
-  ];
 
   const blogPosts = [
     {

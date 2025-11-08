@@ -3,9 +3,6 @@ import {
   Mail, 
   MapPin, 
   Award, 
-  BookOpen, 
-  Brain, 
-  Users, 
   Star,
   User
 } from 'lucide-react';
