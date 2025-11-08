@@ -302,6 +302,192 @@ main {
   border: none !important;
 }
 
+/* Features Horizontal Scroll */
+.features-scroll-container {
+  overflow: hidden;
+  position: relative;
+  width: 100%;
+  padding: 1rem 0;
+}
+
+.features-scroll-track {
+  display: flex;
+  gap: 2rem;
+  animation: scroll-horizontal 20s linear infinite;
+  width: fit-content;
+}
+
+.features-scroll-track:hover {
+  animation-play-state: paused;
+}
+
+.features-scroll-track .feature-card {
+  flex: 0 0 350px;
+  min-width: 350px;
+  max-width: 350px;
+  height: auto;
+  transition: transform 0.3s ease, box-shadow 0.3s ease;
+}
+
+.features-scroll-track .feature-card:hover {
+  transform: translateY(-5px);
+  box-shadow: 0 8px 25px rgba(0, 0, 0, 0.15);
+}
+
+@keyframes scroll-horizontal {
+  0% {
+    transform: translateX(0);
+  }
+  100% {
+    transform: translateX(calc(-350px * 3 - 6rem));
+  }
+}
+
+/* Show 3 cards at a time on desktop */
+@media (min-width: 1200px) {
+  .features-scroll-container {
+    max-width: calc(350px * 3 + 4rem);
+    margin: 0 auto;
+  }
+}
+
+/* Show 2 cards on tablet */
+@media (max-width: 1199px) and (min-width: 768px) {
+  .features-scroll-container {
+    max-width: calc(350px * 2 + 2rem);
+    margin: 0 auto;
+  }
+  
+  @keyframes scroll-horizontal {
+    0% {
+      transform: translateX(0);
+    }
+    100% {
+      transform: translateX(calc(-350px * 2 - 4rem));
+    }
+  }
+}
+
+/* Show 1 card on mobile */
+@media (max-width: 767px) {
+  .features-scroll-track .feature-card {
+    flex: 0 0 280px;
+    min-width: 280px;
+    max-width: 280px;
+  }
+  
+  .features-scroll-container {
+    max-width: 280px;
+    margin: 0 auto;
+  }
+  
+  @keyframes scroll-horizontal {
+    0% {
+      transform: translateX(0);
+    }
+    100% {
+      transform: translateX(calc(-280px * 3 - 6rem));
+    }
+  }
+}
+
+/* Latest Updates Horizontal Scroll */
+.updates-scroll-container {
+  overflow: hidden;
+  position: relative;
+  width: 100%;
+  padding: 1rem 0;
+}
+
+.updates-scroll-track {
+  display: flex;
+  gap: 2rem;
+  animation: scroll-updates 18s linear infinite;
+  width: fit-content;
+}
+
+.updates-scroll-track:hover {
+  animation-play-state: paused;
+}
+
+.updates-scroll-track .update-card {
+  flex: 0 0 350px;
+  min-width: 350px;
+  max-width: 350px;
+  height: auto;
+  transition: transform 0.3s ease, box-shadow 0.3s ease;
+  position: relative;
+}
+
+.updates-scroll-track .update-card:hover {
+  transform: translateY(-5px);
+  box-shadow: 0 8px 25px rgba(0, 0, 0, 0.15);
+}
+
+.updates-scroll-track .update-badge {
+  position: absolute;
+  top: 1rem;
+  right: 1rem;
+  z-index: 2;
+}
+
+@keyframes scroll-updates {
+  0% {
+    transform: translateX(0);
+  }
+  100% {
+    transform: translateX(calc(-350px * 4 - 8rem));
+  }
+}
+
+/* Show 3 update cards at a time on desktop */
+@media (min-width: 1200px) {
+  .updates-scroll-container {
+    max-width: calc(350px * 3 + 4rem);
+    margin: 0 auto;
+  }
+}
+
+/* Show 2 update cards on tablet */
+@media (max-width: 1199px) and (min-width: 768px) {
+  .updates-scroll-container {
+    max-width: calc(350px * 2 + 2rem);
+    margin: 0 auto;
+  }
+  
+  @keyframes scroll-updates {
+    0% {
+      transform: translateX(0);
+    }
+    100% {
+      transform: translateX(calc(-350px * 4 - 8rem));
+    }
+  }
+}
+
+/* Show 1 update card on mobile */
+@media (max-width: 767px) {
+  .updates-scroll-track .update-card {
+    flex: 0 0 280px;
+    min-width: 280px;
+    max-width: 280px;
+  }
+  
+  .updates-scroll-container {
+    max-width: 280px;
+    margin: 0 auto;
+  }
+  
+  @keyframes scroll-updates {
+    0% {
+      transform: translateX(0);
+    }
+    100% {
+      transform: translateX(calc(-280px * 4 - 8rem));
+    }
+  }
+}
+
 /* Mobile responsiveness */
 @media (max-width: 768px) {
   #bp-widget .bpw-chat-container {

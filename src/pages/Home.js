@@ -14,8 +14,14 @@ import {
   Star,
   TrendingUp,
   Heart,
-  Shield
+  Shield,
+  Linkedin,
+  Mail,
+  Activity,
+  Zap,
+  Clock
 } from 'lucide-react';
+import { founderPhoto } from '../assets/images';
 
 const Home = () => {
   const features = [
@@ -58,17 +64,69 @@ const Home = () => {
   ];
 
   const statistics = [
-    { number: "500+", label: "Research Papers", icon: FileText },
-    { number: "150+", label: "Surgical Procedures", icon: Award },
-    { number: "50+", label: "Contributing Colleges", icon: GraduationCap },
-    { number: "10K+", label: "Active Learners", icon: Users }
+    { number: "831+", label: "Research Papers", icon: FileText },
+    { number: "1100+", label: "Thesis Repositories", icon: Award },
+    { number: "50+", label: "AI Powered Textbooks", icon: GraduationCap },
+    { number: "50+", label: "Biographical Articles", icon: Users }
   ];
 
   const upcomingFeatures = [
-    "Virtual Reality Surgical Training",
-    "Real-time OPD Case Integration",
-    "AI-Powered Diagnosis Assistant",
-    "International Collaboration Portal"
+    {
+      icon: Brain,
+      title: "AI-Powered Learning",
+      description: "Intelligent diagnosis assistant and personalized learning paths",
+      phase: "Phase 2",
+      status: "In Development"
+    },
+    {
+      icon: Globe,
+      title: "VR/AR Simulations",
+      description: "Immersive virtual surgical training environment",
+      phase: "Phase 2",
+      status: "Planning"
+    },
+    {
+      icon: Activity,
+      title: "Real-time OPD Integration",
+      description: "Live case studies and clinical integration",
+      phase: "Phase 3",
+      status: "Planned"
+    },
+    {
+      icon: Users,
+      title: "Global Collaboration",
+      description: "International network of Ayurvedic practitioners",
+      phase: "Phase 3",
+      status: "Planned"
+    },
+    {
+      icon: Globe,
+      title: "International Ayurveda Surgery Directory",
+      description: "Comprehensive global directory of Ayurvedic surgeons and institutions",
+      phase: "Phase 3",
+      status: "Planning"
+    },
+    {
+      icon: Users,
+      title: "Mentor-Mentee Network",
+      description: "Connect experienced practitioners with aspiring Ayurvedic surgeons",
+      phase: "Phase 3",
+      status: "Planning"
+    },
+    {
+      icon: FileText,
+      title: "International Journal of Ayurvedic Surgical Research",
+      description: "Peer-reviewed publication platform for Shalya Tantra research",
+      phase: "Phase 3",
+      status: "Planning"
+    },
+    {
+      icon: Award,
+      title: "International Shalya Chikitsak Association",
+      description: "Global professional body for Ayurvedic surgical practitioners",
+      phase: "Phase 3",
+      status: "Planning"
+    }
   ];
 
   return (
@@ -85,13 +143,13 @@ const Home = () => {
               with modern surgical science and AI-powered learning
             </p>
             <div className="hero-buttons">
-              <Link to="/sushruta-samhita" className="btn btn-primary btn-large">
-                <BookOpen size={20} />
-                Explore Sushruta Samhita
+              <Link to="/acharya-sushruta" className="btn btn-primary btn-large">
+                <Users size={20} />
+                Know Acharya Sushruta
               </Link>
-              <Link to="/textbooks" className="btn btn-secondary btn-large">
-                <Download size={20} />
-                Access Textbooks
+              <Link to="/shalya-tantra" className="btn btn-secondary btn-large">
+                <BookOpen size={20} />
+                Explore Shalya Tantra
               </Link>
             </div>
           </div>
@@ -157,146 +215,227 @@ const Home = () => {
             <h2>Platform Features</h2>
             <p>Comprehensive tools and resources for modern Ayurvedic surgical education</p>
           </div>
-          <div className="grid grid-3">
-            {features.map((feature, index) => (
-              <div key={index} className="feature-card card fade-in-up">
-                <div className="card-icon">
-                  <feature.icon size={24} />
+          <div className="features-scroll-container">
+            <div className="features-scroll-track">
+              {features.concat(features).map((feature, index) => (
+                <div key={index} className="feature-card card fade-in-up">
+                  <div className="card-icon">
+                    <feature.icon size={24} />
+                  </div>
+                  <h4>{feature.title}</h4>
+                  <p>{feature.description}</p>
+                  <Link to={feature.link} className="btn btn-outline">
+                    Learn More <ArrowRight size={16} />
+                  </Link>
                 </div>
-                <h4>{feature.title}</h4>
-                <p>{feature.description}</p>
-                <Link to={feature.link} className="btn btn-outline">
-                  Learn More <ArrowRight size={16} />
-                </Link>
-              </div>
-            ))}
-          </div>
-        </div>
-      </section>
-
-      {/* Founder Message Section */}
-      <section className="section section-alt">
-        <div className="container">
-          <div className="founder-message">
-            <div className="grid grid-2">
-              <div className="founder-info">
-                <h2>Message from the Founder</h2>
-                <blockquote>
-                  "The future of Ayurvedic surgery lies in preserving our ancient wisdom while embracing 
-                  modern technology. Through this platform, we aim to create a bridge between the timeless 
-                  teachings of Maharishi Sushruta and contemporary surgical practice, ensuring that future 
-                  generations of Vaidyas are equipped with both traditional knowledge and modern tools."
-                </blockquote>
-                <div className="founder-details">
-                  <h4>Dr. Sameep Singh</h4>
-                  <p>BAMS, PG Scholar (MS Shalya Tantra)<br />
-                  Quadra Institute of Ayurveda & Hospital, Roorkee</p>
-                </div>
-              </div>
-              <div className="founder-achievements">
-                <h3>Project Leadership</h3>
-                <div className="achievement-list">
-                  <div className="achievement-item">
-                    <Award size={20} />
-                    <span>Vision & Leadership</span>
-                  </div>
-                  <div className="achievement-item">
-                    <BookOpen size={20} />
-                    <span>Core Content Development</span>
-                  </div>
-                  <div className="achievement-item">
-                    <Brain size={20} />
-                    <span>AI Integration Planning</span>
-                  </div>
-                  <div className="achievement-item">
-                    <Users size={20} />
-                    <span>Team Coordination</span>
-                  </div>
-                </div>
-              </div>
+              ))}
             </div>
           </div>
         </div>
       </section>
 
       {/* Latest Updates Section */}
-      <section className="section">
+      <section className="section section-alt">
         <div className="container">
           <div className="content-header">
             <h2>Latest Updates</h2>
             <p>Stay informed about the latest developments in Vedic Surgery</p>
           </div>
-          <div className="grid grid-3">
-            <div className="update-card card">
-              <div className="update-badge badge badge-primary">New</div>
-              <h4>Sushruta Samhita Digital Archive</h4>
-              <p>Complete digitization of Sushruta Samhita with Sanskrit, Hindi, and English translations now available.</p>
-              <Link to="/sushruta-samhita" className="btn btn-outline btn-small">
-                Explore Now
-              </Link>
+          <div className="updates-scroll-container">
+            <div className="updates-scroll-track">
+              <div className="update-card card">
+                <div className="update-badge badge badge-primary">New</div>
+                <h4>Sushruta Samhita Digital Archive</h4>
+                <p>Complete digitization of Sushruta Samhita with Sanskrit, Hindi, and English translations now available.</p>
+                <Link to="/sushruta-samhita" className="btn btn-outline btn-small">
+                  Explore Now
+                </Link>
+              </div>
+              <div className="update-card card">
+                <div className="update-badge badge badge-success">Updated</div>
+                <h4>NCISM Syllabus Integration</h4>
+                <p>All textbook content now fully aligned with the latest NCISM curriculum for UG and PG programs.</p>
+                <Link to="/textbooks" className="btn btn-outline btn-small">
+                  View Textbooks
+                </Link>
+              </div>
+              <div className="update-card card">
+                <div className="update-badge badge badge-info">Featured</div>
+                <h4>Research Repository Launch</h4>
+                <p>Access to 500+ research papers and theses from Ayurvedic colleges across India.</p>
+                <Link to="/research" className="btn btn-outline btn-small">
+                  Browse Research
+                </Link>
+              </div>
+              <div className="update-card card">
+                <div className="update-badge badge badge-warning">Coming Soon</div>
+                <h4>AI-Powered Learning Modules</h4>
+                <p>Interactive AI-assisted learning paths with personalized assessments and adaptive content delivery.</p>
+                <Link to="/contact" className="btn btn-outline btn-small">
+                  Get Notified
+                </Link>
+              </div>
+              {/* Duplicate for seamless scroll */}
+              <div className="update-card card">
+                <div className="update-badge badge badge-primary">New</div>
+                <h4>Sushruta Samhita Digital Archive</h4>
+                <p>Complete digitization of Sushruta Samhita with Sanskrit, Hindi, and English translations now available.</p>
+                <Link to="/sushruta-samhita" className="btn btn-outline btn-small">
+                  Explore Now
+                </Link>
+              </div>
+              <div className="update-card card">
+                <div className="update-badge badge badge-success">Updated</div>
+                <h4>NCISM Syllabus Integration</h4>
+                <p>All textbook content now fully aligned with the latest NCISM curriculum for UG and PG programs.</p>
+                <Link to="/textbooks" className="btn btn-outline btn-small">
+                  View Textbooks
+                </Link>
+              </div>
+              <div className="update-card card">
+                <div className="update-badge badge badge-info">Featured</div>
+                <h4>Research Repository Launch</h4>
+                <p>Access to 500+ research papers and theses from Ayurvedic colleges across India.</p>
+                <Link to="/research" className="btn btn-outline btn-small">
+                  Browse Research
+                </Link>
+              </div>
+              <div className="update-card card">
+                <div className="update-badge badge badge-warning">Coming Soon</div>
+                <h4>AI-Powered Learning Modules</h4>
+                <p>Interactive AI-assisted learning paths with personalized assessments and adaptive content delivery.</p>
+                <Link to="/contact" className="btn btn-outline btn-small">
+                  Get Notified
+                </Link>
+              </div>
             </div>
-            <div className="update-card card">
-              <div className="update-badge badge badge-success">Updated</div>
-              <h4>NCISM Syllabus Integration</h4>
-              <p>All textbook content now fully aligned with the latest NCISM curriculum for UG and PG programs.</p>
-              <Link to="/textbooks" className="btn btn-outline btn-small">
-                View Textbooks
-              </Link>
+          </div>
+        </div>
+      </section>
+
+      {/* Founder Message Section */}
+      <section className="section founder-section">
+        <div className="container">
+          <div className="content-header text-center">
+            <h2>Meet the Founder</h2>
+            <p>Pioneering the integration of ancient Ayurvedic wisdom with modern surgical science</p>
+          </div>
+          <div className="founder-container">
+            <div className="founder-image-wrapper">
+              <div className="founder-image-frame">
+                <img src={founderPhoto} alt="Dr. Sameep Singh - Founder" className="founder-image" />
+                <div className="founder-badge">
+                  <Award size={24} />
+                  <span>Founder & Visionary</span>
+                </div>
+              </div>
             </div>
-            <div className="update-card card">
-              <div className="update-badge badge badge-info">Featured</div>
-              <h4>Research Repository Launch</h4>
-              <p>Access to 500+ research papers and theses from Ayurvedic colleges across India.</p>
-              <Link to="/research" className="btn btn-outline btn-small">
-                Browse Research
-              </Link>
+            <div className="founder-content">
+              <div className="founder-header">
+                <h3>Dr. Sameep Singh</h3>
+                <p className="founder-credentials">
+                  BAMS, PG Scholar (MS Shalya Tantra)<br />
+                  Quadra Institute of Ayurveda & Hospital, Roorkee
+                </p>
+              </div>
+              <blockquote className="founder-quote">
+                <div className="quote-mark">"</div>
+                <p>
+                  The future of Ayurvedic surgery lies in preserving our ancient wisdom while embracing 
+                  modern technology. Through this platform, we aim to create a bridge between the timeless 
+                  teachings of Maharishi Sushruta and contemporary surgical practice, ensuring that future 
+                  generations of Vaidyas are equipped with both traditional knowledge and modern tools.
+                </p>
+              </blockquote>
+              <div className="founder-social">
+                <a href="mailto:contact@vedicsurgery.com" className="social-link">
+                  <Mail size={20} />
+                  <span>Get in Touch</span>
+                </a>
+                <a href="#" className="social-link">
+                  <Linkedin size={20} />
+                  <span>Connect on LinkedIn</span>
+                </a>
+              </div>
             </div>
           </div>
         </div>
       </section>
 
       {/* Coming Soon Section */}
-      <section className="section section-alt">
+      <section className="section section-alt roadmap-section">
         <div className="container">
-          <div className="content-header">
-            <h2>Phase 2 & 3 Features</h2>
-            <p>Exciting developments on the horizon</p>
+          <div className="content-header text-center">
+            <div className="section-badge">
+              <Zap size={20} />
+              <span>Coming Soon</span>
+            </div>
+            <h2>Future Innovations</h2>
+            <p>Pioneering the next generation of Ayurvedic surgical education</p>
           </div>
-          <div className="coming-soon-features">
-            <div className="grid grid-2">
-              <div className="coming-soon-list">
-                <h3>Phase 2 Development</h3>
-                <ul>
-                  {upcomingFeatures.map((feature, index) => (
-                    <li key={index}>
-                      <Star size={16} />
-                      <span>{feature}</span>
-                    </li>
-                  ))}
-                </ul>
+          
+          <div className="roadmap-scroll-container">
+            <div className="roadmap-scroll-track">
+              {upcomingFeatures.concat(upcomingFeatures).map((feature, index) => (
+                <div key={index} className="roadmap-card card">
+                  <div className="roadmap-card-header">
+                    <div className="roadmap-icon">
+                      <feature.icon size={28} />
+                    </div>
+                    <div className="roadmap-status">
+                      <Clock size={14} />
+                      <span>{feature.status}</span>
+                    </div>
+                  </div>
+                  <div className="roadmap-card-content">
+                    <div className="roadmap-phase">{feature.phase}</div>
+                    <h3>{feature.title}</h3>
+                    <p>{feature.description}</p>
+                  </div>
+                  <div className="roadmap-card-footer">
+                    <div className="progress-bar">
+                      <div className={`progress-fill ${feature.status.toLowerCase().replace(' ', '-')}`}></div>
+                    </div>
+                  </div>
+                </div>
+              ))}
+            </div>
+          </div>
+
+          <div className="roadmap-timeline">
+            <div className="timeline-header">
+              <h3>Development Roadmap</h3>
+              <p>Our journey towards revolutionizing Ayurvedic surgical education</p>
+            </div>
+            <div className="timeline-track">
+              <div className="timeline-milestone completed">
+                <div className="milestone-marker">
+                  <Award size={20} />
+                </div>
+                <div className="milestone-content">
+                  <span className="milestone-date">Q4 2025</span>
+                  <h4>Phase 1 Complete</h4>
+                  <p>Platform launch with core features and content</p>
+                </div>
               </div>
-              <div className="timeline-preview">
-                <h3>Development Timeline</h3>
-                <div className="timeline-item">
-                  <div className="timeline-date">Q1 2024</div>
-                  <div className="timeline-content">
-                    <h5>Phase 1 Complete</h5>
-                    <p>Full website launch with all core features</p>
-                  </div>
+              <div className="timeline-milestone active">
+                <div className="milestone-marker">
+                  <Brain size={20} />
                 </div>
-                <div className="timeline-item">
-                  <div className="timeline-date">Q2 2024</div>
-                  <div className="timeline-content">
-                    <h5>AI Integration</h5>
-                    <p>Launch of AI-powered learning modules</p>
-                  </div>
+                <div className="milestone-content">
+                  <span className="milestone-date">Q1-Q2 2026</span>
+                  <h4>Phase 2 Development</h4>
+                  <p>AI integration and VR/AR simulations</p>
                 </div>
-                <div className="timeline-item">
-                  <div className="timeline-date">Q3 2024</div>
-                  <div className="timeline-content">
-                    <h5>VR/AR Simulations</h5>
-                    <p>Virtual surgical training environment</p>
-                  </div>
+              </div>
+              <div className="timeline-milestone upcoming">
+                <div className="milestone-marker">
+                  <Globe size={20} />
+                </div>
+                <div className="milestone-content">
+                  <span className="milestone-date">Q3-Q4 2026</span>
+                  <h4>Phase 3 Expansion</h4>
+                  <p>Global collaboration and advanced features</p>
                 </div>
               </div>
             </div>
@@ -304,7 +443,7 @@ const Home = () => {
         </div>
       </section>
 
-      {/* Call to Action Section */}
+      {/* Call to Action Section
       <section className="section">
         <div className="container">
           <div className="cta-section text-center">
@@ -325,7 +464,7 @@ const Home = () => {
             </div>
           </div>
         </div>
-      </section>
+      </section> */}
     </div>
   );
 };

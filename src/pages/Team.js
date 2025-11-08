@@ -22,7 +22,7 @@ const Team = () => {
     {
       id: 1,
       name: "Dr. Sameep Singh",
-      title: "Founder, Project Head & Lead Developer",
+      title: "Founder, Project Head",
       qualification: "BAMS, PG Scholar (MS Shalya Tantra)",
       institution: "Quadra Institute of Ayurveda & Hospital, Roorkee",
       responsibilities: [
@@ -32,7 +32,7 @@ const Team = () => {
         "AI Planning & Strategy",
         "Team Coordination"
       ],
-      specialties: ["Classical Surgery", "AI Integration", "Educational Technology"],
+      specialties: ["Classical Surgery "],
       email: "sameep@vedicsurgery.org",
       location: "Roorkee, Uttarakhand",
       image: "/images/team/dr-sameep-singh.jpg",
@@ -55,7 +55,7 @@ const Team = () => {
         "Chapter Authentication",
         "Clinical Experience Integration"
       ],
-      specialties: ["Clinical Practice", "Surgical Techniques", "Medical Education"],
+      specialties: ["Clinical Practice, ", "Surgical Techniques, ", "Medical Education"],
       email: "saurabh@vedicsurgery.org",
       location: "India",
       image: "/images/team/dr-saurabh-kumar.jpg",
@@ -97,72 +97,24 @@ const Team = () => {
 
   const technicalTeam = [
     {
-      role: "AI & Machine Learning Developer",
-      skills: ["Python", "NLP", "Education-based AI"],
-      responsibilities: ["Build intelligent modules", "Personalized learning systems"],
-      status: "Hiring"
-    },
-    {
-      role: "Software Developer (Web + Mobile)",
-      skills: ["React", "Flutter", "Django"],
-      responsibilities: ["Develop platform", "Interactive textbook features"],
-      status: "Hiring"
-    },
-    {
-      role: "AR/VR Simulation Developer",
-      skills: ["Unity", "Unreal Engine"],
-      responsibilities: ["Virtual surgery demos", "Kshara Sutra simulations"],
-      status: "Hiring"
-    },
-    {
-      role: "UI/UX Designer",
-      skills: ["Figma", "Adobe XD"],
-      responsibilities: ["Engaging interface design", "Student experience optimization"],
-      status: "Hiring"
-    },
-    {
-      role: "Data Integration Specialist",
-      skills: ["Healthcare data pipelines"],
-      responsibilities: ["Hospital OPD integration", "Patient case learning tools"],
-      status: "Hiring"
+      id: 1,
+      name: "Vijay Pratap Singh",
+      title: "Lead Developer",
+      achievements: ["C# Corner MVP", "Gen AI Leader"],
+      skills: ["Full Stack Development, ", "AI/ML, ", "Cloud Architecture, ", "Product Engineering"],
+      responsibilities: [
+        "Platform Architecture & Development",
+        "AI Integration & Implementation",
+        "Technical Strategy & Innovation",
+        "Team Leadership & Mentorship"
+      ],
+      email: "vijaypratap12121999@gmail.com",
+      location: "Noida, Uttar Pradesh, India",
+      bio: "Experienced product engineer driving the technical vision and implementation of the Vedic Surgery platform with expertise in AI and modern web technologies.",
+      status: "Active"
     }
   ];
 
-  const contentTeam = [
-    {
-      role: "Editor (English-Hindi-Sanskrit)",
-      responsibility: "Tri-lingual content refinement and formatting",
-      status: "Hiring"
-    },
-    {
-      role: "Illustrator / Medical Animator",
-      responsibility: "Create diagrams, 2D/3D visuals, procedural illustrations",
-      status: "Hiring"
-    },
-    {
-      role: "Research Associate",
-      responsibility: "Literature review, evidence synthesis, citation management",
-      status: "Hiring"
-    }
-  ];
-
-  const supportTeam = [
-    {
-      role: "Funding & Grant Coordinator",
-      responsibility: "Apply for AYUSH, DST, CSR, and international grants",
-      status: "Hiring"
-    },
-    {
-      role: "Publishing Liaison",
-      responsibility: "Coordination with Chaukhamba or other medical publishers",
-      status: "Hiring"
-    },
-    {
-      role: "Social Media & Outreach Coordinator",
-      responsibility: "Awareness building, conferences, beta testers, student feedback",
-      status: "Hiring"
-    }
-  ];
 
   return (
     <div className="team-page">
@@ -309,182 +261,72 @@ const Team = () => {
           </div>
 
           <div className="team-section">
-            <div className="hiring-notice">
-              <div className="notice-content">
-                <Heart size={24} />
-                <h4>Join Our Mission</h4>
-                <p>We're actively seeking talented individuals to join our technical team. Help us revolutionize medical education!</p>
-                <button className="btn btn-primary">
-                  <Mail size={16} />
-                  Apply Now
-                </button>
-              </div>
-            </div>
-
-            <div className="positions-grid grid grid-2">
-              {technicalTeam.map((position, index) => (
-                <div key={index} className="position-card card">
-                  <div className="position-header">
-                    <div className="position-icon">
-                      {position.role.includes('AI') ? <Brain size={24} /> :
-                       position.role.includes('Developer') ? <Code size={24} /> :
-                       position.role.includes('Designer') ? <Palette size={24} /> :
-                       <Users size={24} />}
-                    </div>
-                    <div className="position-info">
-                      <h4>{position.role}</h4>
-                      <span className="status-badge badge badge-success">{position.status}</span>
+            {/* Lead Developer Card */}
+            {technicalTeam.filter(member => member.id).map((member) => (
+              <div key={member.id} className="leader-card card" style={{marginBottom: '3rem'}}>
+                <div className="leader-header">
+                  <div className="leader-image">
+                    <div className="image-placeholder">
+                      <User size={48} />
                     </div>
                   </div>
-
-                  <div className="position-skills">
-                    <h5>Required Skills:</h5>
-                    <div className="skill-tags">
-                      {position.skills.map((skill, skillIndex) => (
-                        <span key={skillIndex} className="skill-tag">
-                          {skill}
+                  <div className="leader-info">
+                    <h3>{member.name}</h3>
+                    <p className="leader-title">{member.title}</p>
+                    <p className="leader-qualification">{member.designation}</p>
+                    <div className="achievement-badges">
+                      {member.achievements.map((achievement, index) => (
+                        <span key={index} className="badge badge-primary" style={{marginRight: '0.5rem'}}>
+                          {achievement}
                         </span>
                       ))}
                     </div>
                   </div>
+                </div>
 
-                  <div className="position-responsibilities">
-                    <h5>Responsibilities:</h5>
-                    <ul>
-                      {position.responsibilities.map((resp, respIndex) => (
-                        <li key={respIndex}>{resp}</li>
-                      ))}
-                    </ul>
+                <div className="leader-bio">
+                  <p>{member.bio}</p>
+                </div>
+
+                <div className="leader-responsibilities">
+                  <h5>Key Responsibilities:</h5>
+                  <ul>
+                    {member.responsibilities.map((responsibility, index) => (
+                      <li key={index}>
+                        <Award size={14} />
+                        <span>{responsibility}</span>
+                      </li>
+                    ))}
+                  </ul>
+                </div>
+
+                <div className="leader-specialties">
+                  <h5>Technical Expertise:</h5>
+                  <div className="specialty-tags">
+                    {member.skills.map((skill, index) => (
+                      <span key={index} className="specialty-tag">
+                        {skill}
+                      </span>
+                    ))}
                   </div>
-
-                  <button className="btn btn-outline">
-                    <ExternalLink size={16} />
-                    View Details
-                  </button>
                 </div>
-              ))}
-            </div>
-          </div>
-        </div>
-      </section>
 
-      {/* Content & Editorial Team */}
-      <section className="section section-alt">
-        <div className="container">
-          <div className="content-header">
-            <h2>Content Development & Editorial Team</h2>
-            <p>Ensuring quality, accuracy, and accessibility of educational content</p>
-          </div>
-
-          <div className="content-team-grid grid grid-3">
-            {contentTeam.map((member, index) => (
-              <div key={index} className="content-member-card card">
-                <div className="member-icon">
-                  {member.role.includes('Editor') ? <BookOpen size={24} /> :
-                   member.role.includes('Illustrator') ? <Palette size={24} /> :
-                   <FileText size={24} />}
+                <div className="leader-contact">
+                  <div className="contact-item">
+                    <Mail size={16} />
+                    <span>{member.email}</span>
+                  </div>
+                  <div className="contact-item">
+                    <MapPin size={16} />
+                    <span>{member.location}</span>
+                  </div>
                 </div>
-                <h4>{member.role}</h4>
-                <p>{member.responsibility}</p>
-                <span className="status-badge badge badge-info">{member.status}</span>
-                <button className="btn btn-outline btn-small">Apply</button>
               </div>
             ))}
           </div>
         </div>
       </section>
 
-      {/* Support & Outreach Team */}
-      <section className="section">
-        <div className="container">
-          <div className="content-header">
-            <h2>Support & Outreach Team</h2>
-            <p>Building partnerships, securing funding, and expanding our reach</p>
-          </div>
-
-          <div className="support-team-grid grid grid-3">
-            {supportTeam.map((member, index) => (
-              <div key={index} className="support-member-card card">
-                <div className="member-icon">
-                  {member.role.includes('Funding') ? <Award size={24} /> :
-                   member.role.includes('Publishing') ? <BookOpen size={24} /> :
-                   <Users size={24} />}
-                </div>
-                <h4>{member.role}</h4>
-                <p>{member.responsibility}</p>
-                <span className="status-badge badge badge-warning">{member.status}</span>
-                <button className="btn btn-outline btn-small">Apply</button>
-              </div>
-            ))}
-          </div>
-        </div>
-      </section>
-
-      {/* Join Us Section */}
-      <section className="section section-alt">
-        <div className="container">
-          <div className="join-us-section text-center">
-            <h2>Join Our Mission</h2>
-            <p>
-              Be part of the revolutionary change in Ayurvedic surgical education. 
-              We welcome contributors, volunteers, advisors, and supporters from all backgrounds.
-            </p>
-            
-            <div className="contribution-types grid grid-4">
-              <div className="contribution-card">
-                <div className="contrib-icon">
-                  <Code size={32} />
-                </div>
-                <h4>Developers</h4>
-                <p>Help build the platform</p>
-                <button className="btn btn-outline">Join Team</button>
-              </div>
-              
-              <div className="contribution-card">
-                <div className="contrib-icon">
-                  <BookOpen size={32} />
-                </div>
-                <h4>Content Experts</h4>
-                <p>Share your knowledge</p>
-                <button className="btn btn-outline">Contribute</button>
-              </div>
-              
-              <div className="contribution-card">
-                <div className="contrib-icon">
-                  <Award size={32} />
-                </div>
-                <h4>Advisors</h4>
-                <p>Provide strategic guidance</p>
-                <button className="btn btn-outline">Advise</button>
-              </div>
-              
-              <div className="contribution-card">
-                <div className="contrib-icon">
-                  <Heart size={32} />
-                </div>
-                <h4>Supporters</h4>
-                <p>Fund the mission</p>
-                <button className="btn btn-outline">Support</button>
-              </div>
-            </div>
-
-            <div className="contact-cta">
-              <h3>Ready to make a difference?</h3>
-              <p>Contact us to learn more about opportunities to contribute</p>
-              <div className="cta-buttons">
-                <button className="btn btn-primary btn-large">
-                  <Mail size={20} />
-                  Contact Us
-                </button>
-                <button className="btn btn-secondary btn-large">
-                  <Github size={20} />
-                  View on GitHub
-                </button>
-              </div>
-            </div>
-          </div>
-        </div>
-      </section>
     </div>
   );
 };

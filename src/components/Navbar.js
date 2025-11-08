@@ -27,9 +27,9 @@ const Navbar = () => {
     { path: '/biography', label: 'Biography' },
     { path: '/blog', label: 'Blog' },
     { path: '/syllabus-tracker', label: 'Syllabus' },
-    { path: '/simulations', label: 'Simulations' },
-    { path: '/news', label: 'News' },
-    { path: '/forum', label: 'Forum' },
+    // { path: '/simulations', label: 'Simulations' },
+    // { path: '/news', label: 'News' },
+    // { path: '/forum', label: 'Forum' },
     { path: '/team', label: 'Team' },
     { path: '/contact', label: 'Contact' }
   ];

@@ -6,6 +6,8 @@ import './App.css';
 import Navbar from './components/Navbar';
 import Footer from './components/Footer';
 import Home from './pages/Home';
+import AcharyaSushruta from './pages/AcharyaSushruta';
+import ShalyaTantra from './pages/ShalyaTantra';
 import SushrutaSamhita from './pages/SushrutaSamhita';
 import Textbooks from './pages/Textbooks';
 import Research from './pages/Research';
@@ -27,6 +29,8 @@ function App() {
         <main>
           <Routes>
             <Route path="/" element={<Home />} />
+            <Route path="/acharya-sushruta" element={<AcharyaSushruta />} />
+            <Route path="/shalya-tantra" element={<ShalyaTantra />} />
             <Route path="/sushruta-samhita" element={<SushrutaSamhita />} />
             <Route path="/textbooks" element={<Textbooks />} />
             <Route path="/research" element={<Research />} />
