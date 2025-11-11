@@ -1,7 +1,6 @@
 import React, { useState } from 'react';
 import { Link, useLocation } from 'react-router-dom';
 import { Menu, X } from 'lucide-react';
-import { logo } from '../assets/images';
 
 const Navbar = () => {
   const [isMenuOpen, setIsMenuOpen] = useState(false);
@@ -39,10 +38,6 @@ const Navbar = () => {
     <nav className="navbar">
       <div className="container">
         <div className="navbar-content">
-          <Link to="/" className="navbar-brand" onClick={closeMenu}>
-            <img src={logo} alt="Vedic Surgery" className="navbar-logo" />
-          </Link>
-          
           <button 
             className="mobile-menu-toggle"
             onClick={toggleMenu}

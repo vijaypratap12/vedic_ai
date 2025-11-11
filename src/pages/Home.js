@@ -1,5 +1,6 @@
 import React from 'react';
 import { Link } from 'react-router-dom';
+import Typewriter from 'typewriter-effect';
 import { 
   BookOpen, 
   Users, 
@@ -133,10 +134,34 @@ const Home = () => {
             <h1>
               <span className="sanskrit">वैदिक</span> Surgery
             </h1>
-            <p className="hero-subtitle">
-              Revolutionizing Ayurvedic surgical education by integrating classical Shalya Tantra wisdom 
-              with modern surgical science and AI-powered learning
-            </p>
+            <div className="hero-subtitle-container">
+              <div className="hero-subtitle-lines-1-2">
+                <Typewriter
+                  options={{
+                    strings: ['Revolutionizing Ayurvedic surgical education<br/>by integrating classical Shalya Tantra wisdom with modern surgical science'],
+                    autoStart: true,
+                    delay: 20,
+                    deleteSpeed: Infinity,
+                    cursor: '',
+                    loop: false,
+                    startDelay: 200,
+                  }}
+                />
+              </div>
+              <div className="hero-subtitle-line3">
+                <Typewriter
+                  options={{
+                    strings: ['<strong>AI-Powered Learning</strong>'],
+                    autoStart: true,
+                    delay: 150,
+                    deleteSpeed: Infinity,
+                    cursor: '|',
+                    loop: false,
+                    startDelay: 15500,
+                  }}
+                />
+              </div>
+            </div>
             <div className="hero-buttons">
               <Link to="/acharya-sushruta" className="btn btn-primary btn-large">
                 <Users size={20} />
