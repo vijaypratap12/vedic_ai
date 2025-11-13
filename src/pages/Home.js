@@ -136,28 +136,21 @@ const Home = () => {
             </h1>
             <div className="hero-subtitle-container">
               <div className="hero-subtitle-lines-1-2">
-                <Typewriter
-                  options={{
-                    strings: ['Revolutionizing Ayurvedic surgical education<br/>by integrating classical Shalya Tantra wisdom with modern surgical science'],
-                    autoStart: true,
-                    delay: 20,
-                    deleteSpeed: Infinity,
-                    cursor: '',
-                    loop: false,
-                    startDelay: 200,
-                  }}
-                />
+                <p>
+                  Revolutionizing Ayurvedic surgical education<br/>
+                  by integrating classical Shalya Tantra wisdom with modern surgical science
+                </p>
               </div>
               <div className="hero-subtitle-line3">
                 <Typewriter
                   options={{
                     strings: ['<strong>AI-Powered Learning</strong>'],
                     autoStart: true,
-                    delay: 150,
+                    delay: 100,
                     deleteSpeed: Infinity,
                     cursor: '|',
                     loop: false,
-                    startDelay: 15500,
+                    startDelay: 1500,
                   }}
                 />
               </div>

@@ -1,46 +1,45 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useCallback } from 'react';
 import { 
   X, 
   ZoomIn, 
   ZoomOut, 
   BookOpen, 
   Sun, 
-  Moon, 
-  Eye,
+  Moon,
   ChevronLeft,
   ChevronRight,
   Bookmark,
   MessageCircle,
-  Settings,
   Maximize2,
-  Minimize2
+  Minimize2,
+  List
 } from 'lucide-react';
+import apiService from '../services/api';
 
-const Reader = ({ isOpen, onClose, content, title, author }) => {
+const Reader = ({ isOpen, onClose, bookId, initialChapter = 1 }) => {
   const [fontSize, setFontSize] = useState(18);
-  const [theme, setTheme] = useState('light');
-  const [currentPage, setCurrentPage] = useState(1);
+  const [theme, setTheme] = useState('night');
   const [isFullscreen, setIsFullscreen] = useState(false);
   const [showAIAssistant, setShowAIAssistant] = useState(false);
   const [selectedText, setSelectedText] = useState('');
   const [bookmarks, setBookmarks] = useState([]);
-  const [showSettings, setShowSettings] = useState(false);
+  const [showChapterList, setShowChapterList] = useState(false);
+
+  // Chapter-related state
+  const [currentChapter, setCurrentChapter] = useState(null);
+  const [chapters, setChapters] = useState([]);
+  const [bookInfo, setBookInfo] = useState(null);
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState(null);
 
   // Theme configurations
   const themes = {
     light: {
       name: 'Light',
       bg: '#ffffff',
-      text: '#1a1a1a',
+      text: '#000000',
       secondary: '#666666',
-      accent: '#8b4513'
-    },
-    sepia: {
-      name: 'Sepia',
-      bg: '#f4ecd8',
-      text: '#5c4a3a',
-      secondary: '#8b7355',
-      accent: '#8b4513'
+      accent: '#000000'
     },
     dark: {
       name: 'Dark',
@@ -55,17 +54,90 @@ const Reader = ({ isOpen, onClose, content, title, author }) => {
       text: '#c9d1d9',
       secondary: '#8b949e',
       accent: '#58a6ff'
-    },
-    green: {
-      name: 'Green Eye',
-      bg: '#e8f5e9',
-      text: '#1b5e20',
-      secondary: '#388e3c',
-      accent: '#2e7d32'
     }
   };
 
   const currentTheme = themes[theme];
+
+  const fetchBookWithChapters = useCallback(async () => {
+    try {
+      setLoading(true);
+      const data = await apiService.getBookWithChapters(bookId);
+      setBookInfo(data);
+      setChapters(data.chapters || []);
+      setError(null);
+    } catch (err) {
+      setError('Failed to load book chapters');
+      console.error('Error fetching book with chapters:', err);
+    } finally {
+      setLoading(false);
+    }
+  }, [bookId]);
+
+  const fetchChapter = useCallback(async (chapterNumber) => {
+    try {
+      setLoading(true);
+      const data = await apiService.getChapter(bookId, chapterNumber);
+      setCurrentChapter(data);
+      setError(null);
+    } catch (err) {
+      setError('Failed to load chapter');
+      console.error('Error fetching chapter:', err);
+    } finally {
+      setLoading(false);
+    }
+  }, [bookId]);
+
+  // Fetch book with chapters on mount
+  useEffect(() => {
+    if (isOpen && bookId) {
+      fetchBookWithChapters();
+    }
+  }, [isOpen, bookId, fetchBookWithChapters]);
+
+  // Fetch specific chapter when chapter number changes
+  useEffect(() => {
+    if (isOpen && bookId && initialChapter) {
+      fetchChapter(initialChapter);
+    }
+  }, [isOpen, bookId, initialChapter, fetchChapter]);
+
+  const handleNextChapter = useCallback(async () => {
+    if (!currentChapter || !currentChapter.hasNextChapter) return;
+    
+    try {
+      setLoading(true);
+      const data = await apiService.getNextChapter(bookId, currentChapter.chapterNumber);
+      setCurrentChapter(data);
+      setError(null);
+    } catch (err) {
+      setError('Failed to load next chapter');
+      console.error('Error fetching next chapter:', err);
+    } finally {
+      setLoading(false);
+    }
+  }, [bookId, currentChapter]);
+
+  const handlePreviousChapter = useCallback(async () => {
+    if (!currentChapter || !currentChapter.hasPreviousChapter) return;
+    
+    try {
+      setLoading(true);
+      const data = await apiService.getPreviousChapter(bookId, currentChapter.chapterNumber);
+      setCurrentChapter(data);
+      setError(null);
+    } catch (err) {
+      setError('Failed to load previous chapter');
+      console.error('Error fetching previous chapter:', err);
+    } finally {
+      setLoading(false);
+    }
+  }, [bookId, currentChapter]);
+
+  const handleChapterSelect = (chapterNumber) => {
+    fetchChapter(chapterNumber);
+    setShowChapterList(false);
+  };
 
   // Handle text selection for AI assistance
   const handleTextSelection = () => {
@@ -79,10 +151,12 @@ const Reader = ({ isOpen, onClose, content, title, author }) => {
 
   // Toggle bookmark
   const toggleBookmark = () => {
-    if (bookmarks.includes(currentPage)) {
-      setBookmarks(bookmarks.filter(page => page !== currentPage));
+    if (!currentChapter) return;
+    const chapterNum = currentChapter.chapterNumber;
+    if (bookmarks.includes(chapterNum)) {
+      setBookmarks(bookmarks.filter(num => num !== chapterNum));
     } else {
-      setBookmarks([...bookmarks, currentPage]);
+      setBookmarks([...bookmarks, chapterNum]);
     }
   };
 
@@ -92,8 +166,8 @@ const Reader = ({ isOpen, onClose, content, title, author }) => {
       if (!isOpen) return;
       
       if (e.key === 'Escape') onClose();
-      if (e.key === 'ArrowLeft') setCurrentPage(prev => Math.max(1, prev - 1));
-      if (e.key === 'ArrowRight') setCurrentPage(prev => prev + 1);
+      if (e.key === 'ArrowLeft') handlePreviousChapter();
+      if (e.key === 'ArrowRight') handleNextChapter();
       if (e.key === '+' && e.ctrlKey) {
         e.preventDefault();
         setFontSize(prev => Math.min(32, prev + 2));
@@ -106,7 +180,7 @@ const Reader = ({ isOpen, onClose, content, title, author }) => {
 
     window.addEventListener('keydown', handleKeyPress);
     return () => window.removeEventListener('keydown', handleKeyPress);
-  }, [isOpen, onClose]);
+  }, [isOpen, onClose, currentChapter, handleNextChapter, handlePreviousChapter]);
 
   if (!isOpen) return null;
 
@@ -124,12 +198,28 @@ const Reader = ({ isOpen, onClose, content, title, author }) => {
           <div className="reader-title-section">
             <BookOpen size={20} style={{ color: currentTheme.accent }} />
             <div>
-              <h3 style={{ color: currentTheme.text }}>{title}</h3>
-              {author && <p style={{ color: currentTheme.secondary }}>{author}</p>}
+              <h3 style={{ color: currentTheme.text }}>
+                {currentChapter ? currentChapter.bookTitle : bookInfo?.title || 'Loading...'}
+              </h3>
+              {currentChapter && (
+                <p style={{ color: currentTheme.secondary }}>
+                  Chapter {currentChapter.chapterNumber}: {currentChapter.chapterTitle}
+                </p>
+              )}
             </div>
           </div>
           
           <div className="reader-controls">
+            {/* Chapter List Toggle */}
+            <button 
+              className={`control-btn ${showChapterList ? 'active' : ''}`}
+              onClick={() => setShowChapterList(!showChapterList)}
+              style={{ color: currentTheme.text }}
+              title="Chapter list"
+            >
+              <List size={18} />
+            </button>
+
             {/* Theme Selector */}
             <div className="theme-selector">
               {Object.keys(themes).map((themeKey) => (
@@ -145,9 +235,7 @@ const Reader = ({ isOpen, onClose, content, title, author }) => {
                 >
                   {themeKey === 'light' && <Sun size={16} />}
                   {themeKey === 'dark' && <Moon size={16} />}
-                  {themeKey === 'sepia' && <Eye size={16} />}
                   {themeKey === 'night' && <Moon size={16} />}
-                  {themeKey === 'green' && <Eye size={16} />}
                 </button>
               ))}
             </div>
@@ -173,21 +261,12 @@ const Reader = ({ isOpen, onClose, content, title, author }) => {
 
             {/* Additional Controls */}
             <button 
-              className={`control-btn ${bookmarks.includes(currentPage) ? 'active' : ''}`}
+              className={`control-btn ${currentChapter && bookmarks.includes(currentChapter.chapterNumber) ? 'active' : ''}`}
               onClick={toggleBookmark}
-              style={{ color: bookmarks.includes(currentPage) ? currentTheme.accent : currentTheme.text }}
-              title="Bookmark this page"
+              style={{ color: currentChapter && bookmarks.includes(currentChapter.chapterNumber) ? currentTheme.accent : currentTheme.text }}
+              title="Bookmark this chapter"
             >
-              <Bookmark size={18} fill={bookmarks.includes(currentPage) ? 'currentColor' : 'none'} />
-            </button>
-
-            <button 
-              className="control-btn"
-              onClick={() => setShowSettings(!showSettings)}
-              style={{ color: currentTheme.text }}
-              title="Settings"
-            >
-              <Settings size={18} />
+              <Bookmark size={18} fill={currentChapter && bookmarks.includes(currentChapter.chapterNumber) ? 'currentColor' : 'none'} />
             </button>
 
             <button 
@@ -212,71 +291,105 @@ const Reader = ({ isOpen, onClose, content, title, author }) => {
 
         {/* Main Content Area */}
         <div className="reader-main">
+          {/* Chapter List Sidebar */}
+          {showChapterList && (
+            <div 
+              className="chapter-list-panel"
+              style={{ 
+                backgroundColor: currentTheme.bg,
+                borderRightColor: currentTheme.secondary + '40'
+              }}
+            >
+              <div className="chapter-list-header">
+                <h4 style={{ color: currentTheme.text }}>Chapters</h4>
+                <button 
+                  onClick={() => setShowChapterList(false)}
+                  style={{ color: currentTheme.text }}
+                >
+                  <X size={18} />
+                </button>
+              </div>
+              <div className="chapter-list-content">
+                {chapters.map((chapter) => (
+                  <button
+                    key={chapter.id}
+                    className={`chapter-item ${currentChapter?.chapterNumber === chapter.chapterNumber ? 'active' : ''}`}
+                    onClick={() => handleChapterSelect(chapter.chapterNumber)}
+                    style={{
+                      backgroundColor: currentChapter?.chapterNumber === chapter.chapterNumber 
+                        ? currentTheme.accent + '20' 
+                        : 'transparent',
+                      color: currentChapter?.chapterNumber === chapter.chapterNumber 
+                        ? currentTheme.accent 
+                        : currentTheme.text,
+                      borderLeftColor: bookmarks.includes(chapter.chapterNumber) 
+                        ? currentTheme.accent 
+                        : 'transparent'
+                    }}
+                  >
+                    <div className="chapter-number">Ch. {chapter.chapterNumber}</div>
+                    <div className="chapter-info">
+                      <div className="chapter-title">{chapter.chapterTitle}</div>
+                      {chapter.chapterSubtitle && (
+                        <div className="chapter-subtitle" style={{ color: currentTheme.secondary }}>
+                          {chapter.chapterSubtitle}
+                        </div>
+                      )}
+                      {chapter.readingTimeMinutes && (
+                        <div className="chapter-meta" style={{ color: currentTheme.secondary }}>
+                          {chapter.readingTimeMinutes} min read
+                        </div>
+                      )}
+                    </div>
+                  </button>
+                ))}
+              </div>
+            </div>
+          )}
+
           {/* Content */}
           <div 
             className="reader-content"
             style={{ fontSize: `${fontSize}px` }}
             onMouseUp={handleTextSelection}
           >
-            <div className="reader-page">
-              {content ? (
-                <div dangerouslySetInnerHTML={{ __html: content }} />
-              ) : (
-                <div className="sample-content">
-                  <h2 style={{ color: currentTheme.accent }}>Chapter 1: Introduction to Shalya Tantra</h2>
-                  
-                  <p>
-                    Shalya Tantra, the ancient science of surgery in Ayurveda, represents one of the eight 
-                    branches of Ayurvedic medicine. The term "Shalya" refers to a foreign body or any pathological 
-                    condition requiring surgical intervention, while "Tantra" means a systematic approach or science.
-                  </p>
-
-                  <h3 style={{ color: currentTheme.accent }}>Historical Context</h3>
-                  <p>
-                    The foundation of Shalya Tantra was laid by Maharishi Sushruta, often referred to as the 
-                    "Father of Surgery." His magnum opus, the Sushruta Samhita, compiled around 600 BCE, contains 
-                    detailed descriptions of over 300 surgical procedures and 121 surgical instruments.
-                  </p>
-
-                  <blockquote style={{ 
-                    borderLeftColor: currentTheme.accent,
-                    backgroundColor: currentTheme.secondary + '10',
-                    color: currentTheme.text
-                  }}>
-                    "योगः कर्मसु कौशलम्" (Yogaḥ karmasu kauśalam)
-                    <br />
-                    <em style={{ color: currentTheme.secondary }}>
-                      - Excellence in action is yoga. This principle guides the surgeon's hand.
-                    </em>
-                  </blockquote>
-
-                  <h3 style={{ color: currentTheme.accent }}>Fundamental Principles</h3>
-                  <p>
-                    The practice of Shalya Tantra is built upon several fundamental principles:
-                  </p>
-                  <ul>
-                    <li><strong>Yantra Karma</strong> - Use of instruments</li>
-                    <li><strong>Shastra Karma</strong> - Sharp instrument procedures</li>
-                    <li><strong>Agni Karma</strong> - Thermal cauterization</li>
-                    <li><strong>Kshara Karma</strong> - Alkaline cauterization</li>
-                    <li><strong>Jalauka Avacharana</strong> - Leech therapy</li>
-                  </ul>
-
-                  <h3 style={{ color: currentTheme.accent }}>Modern Relevance</h3>
-                  <p>
-                    Today, Shalya Tantra continues to evolve, integrating traditional wisdom with modern 
-                    surgical techniques. Procedures like Kshara Sutra therapy for anorectal disorders have 
-                    gained international recognition for their efficacy and minimal invasiveness.
-                  </p>
-
-                  <p>
-                    The holistic approach of Ayurvedic surgery, which considers the patient's constitution 
-                    (Prakriti), seasonal variations (Ritu), and post-operative care (Paschat Karma), offers 
-                    valuable insights for contemporary surgical practice.
-                  </p>
+            {loading ? (
+              <div className="reader-loading" style={{ color: currentTheme.secondary }}>
+                <p>Loading chapter...</p>
+              </div>
+            ) : error ? (
+              <div className="reader-error" style={{ color: currentTheme.accent }}>
+                <p>{error}</p>
+                <button onClick={() => fetchChapter(initialChapter)}>Retry</button>
+              </div>
+            ) : currentChapter ? (
+              <div className="reader-page">
+                <div className="chapter-header">
+                  <h2 style={{ color: currentTheme.accent }}>
+                    Chapter {currentChapter.chapterNumber}: {currentChapter.chapterTitle}
+                  </h2>
+                  {currentChapter.chapterSubtitle && (
+                    <h3 style={{ color: currentTheme.secondary }}>
+                      {currentChapter.chapterSubtitle}
+                    </h3>
+                  )}
+                  {currentChapter.readingTimeMinutes && (
+                    <p className="reading-time" style={{ color: currentTheme.secondary }}>
+                      Estimated reading time: {currentChapter.readingTimeMinutes} minutes
+                    </p>
+                  )}
                 </div>
-              )}
-            </div>
+                <div 
+                  className="chapter-content"
+                  dangerouslySetInnerHTML={{ __html: currentChapter.contentHtml }}
+                  style={{ color: currentTheme.text }}
+                />
+              </div>
+            ) : (
+              <div className="reader-empty" style={{ color: currentTheme.secondary }}>
+                <p>No chapter selected</p>
+              </div>
+            )}
           </div>
 
           {/* AI Assistant Sidebar */}
@@ -343,15 +456,6 @@ const Reader = ({ isOpen, onClose, content, title, author }) => {
                   >
                     Show related topics
                   </button>
-                  <button 
-                    className="ai-action-btn"
-                    style={{ 
-                      backgroundColor: currentTheme.accent + '20',
-                      color: currentTheme.accent
-                    }}
-                  >
-                    Find in Sushruta Samhita
-                  </button>
                 </div>
 
                 <div 
@@ -366,8 +470,7 @@ const Reader = ({ isOpen, onClose, content, title, author }) => {
                   </p>
                   <p style={{ fontSize: '0.95em' }}>
                     Select any text while reading to get instant explanations, translations, 
-                    and contextual information. The AI will help you understand complex concepts, 
-                    Sanskrit terms, and provide references to classical texts.
+                    and contextual information.
                   </p>
                 </div>
               </div>
@@ -379,23 +482,34 @@ const Reader = ({ isOpen, onClose, content, title, author }) => {
         <div className="reader-footer" style={{ borderTopColor: currentTheme.secondary + '40' }}>
           <div className="page-navigation">
             <button 
-              onClick={() => setCurrentPage(prev => Math.max(1, prev - 1))}
-              disabled={currentPage === 1}
-              style={{ color: currentTheme.text }}
+              onClick={handlePreviousChapter}
+              disabled={!currentChapter || !currentChapter.hasPreviousChapter || loading}
+              style={{ 
+                color: currentTheme.text,
+                opacity: (!currentChapter || !currentChapter.hasPreviousChapter || loading) ? 0.5 : 1
+              }}
             >
               <ChevronLeft size={20} />
-              Previous
+              Previous Chapter
             </button>
             
             <div className="page-info" style={{ color: currentTheme.secondary }}>
-              Page {currentPage} of 150
+              {currentChapter ? (
+                <>Chapter {currentChapter.chapterNumber} of {bookInfo?.totalChapters || chapters.length}</>
+              ) : (
+                <>Loading...</>
+              )}
             </div>
             
             <button 
-              onClick={() => setCurrentPage(prev => prev + 1)}
-              style={{ color: currentTheme.text }}
+              onClick={handleNextChapter}
+              disabled={!currentChapter || !currentChapter.hasNextChapter || loading}
+              style={{ 
+                color: currentTheme.text,
+                opacity: (!currentChapter || !currentChapter.hasNextChapter || loading) ? 0.5 : 1
+              }}
             >
-              Next
+              Next Chapter
               <ChevronRight size={20} />
             </button>
           </div>
@@ -410,4 +524,3 @@ const Reader = ({ isOpen, onClose, content, title, author }) => {
 };
 
 export default Reader;
-
