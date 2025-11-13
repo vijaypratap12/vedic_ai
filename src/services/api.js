@@ -2,7 +2,7 @@
  * API Configuration
  * Base URL for the Vedic API
  */
-const API_BASE_URL = process.env.REACT_APP_API_URL || 'https://localhost:7135/api';
+const API_BASE_URL = process.env.REACT_APP_API_URL || 'https://vedicapi.azurewebsites.net/api';
 
 /**
  * Generic API error handler
