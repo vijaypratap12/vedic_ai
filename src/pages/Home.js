@@ -337,10 +337,6 @@ const Home = () => {
             <div className="founder-image-wrapper">
               <div className="founder-image-frame">
                 <img src={founderPhoto} alt="Dr. Sameep Singh - Founder" className="founder-image" />
-                <div className="founder-badge">
-                  <Award size={24} />
-                  <span>Founder & Visionary</span>
-                </div>
               </div>
             </div>
             <div className="founder-content">
