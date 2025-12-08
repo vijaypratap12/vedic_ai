@@ -17,16 +17,31 @@ class ApiError extends Error {
 }
 
 /**
+ * Get auth token from localStorage
+ */
+function getAuthToken() {
+  return localStorage.getItem('vedic_ai_token');
+}
+
+/**
  * Generic fetch wrapper with error handling
  */
 async function apiFetch(url, options = {}) {
   try {
+    const token = getAuthToken();
+    const headers = {
+      'Content-Type': 'application/json',
+      ...options.headers,
+    };
+
+    // Add Authorization header if token exists
+    if (token) {
+      headers['Authorization'] = `Bearer ${token}`;
+    }
+
     const response = await fetch(url, {
       ...options,
-      headers: {
-        'Content-Type': 'application/json',
-        ...options.headers,
-      },
+      headers,
     });
 
     const data = await response.json();
@@ -196,6 +211,67 @@ const apiService = {
    */
   getChapterById: async (chapterId) => {
     const response = await apiFetch(`${API_BASE_URL}/chapters/${chapterId}`);
+    return response.data;
+  },
+
+  // ==================== Authentication API Methods ====================
+
+  /**
+   * User signup/registration
+   */
+  signup: async (name, email, password) => {
+    const response = await apiFetch(`${API_BASE_URL}/Auth/signup`, {
+      method: 'POST',
+      body: JSON.stringify({ name, email, password }),
+    });
+    return response;
+  },
+
+  /**
+   * User login
+   */
+  login: async (email, password) => {
+    const response = await apiFetch(`${API_BASE_URL}/Auth/login`, {
+      method: 'POST',
+      body: JSON.stringify({ email, password }),
+    });
+    return response;
+  },
+
+  /**
+   * Refresh access token
+   */
+  refreshToken: async (accessToken, refreshToken) => {
+    const response = await apiFetch(`${API_BASE_URL}/Auth/refresh-token`, {
+      method: 'POST',
+      body: JSON.stringify({ accessToken, refreshToken }),
+    });
+    return response;
+  },
+
+  /**
+   * Logout user (revoke refresh token)
+   */
+  logout: async () => {
+    const response = await apiFetch(`${API_BASE_URL}/Auth/logout`, {
+      method: 'POST',
+    });
+    return response;
+  },
+
+  /**
+   * Get user profile
+   */
+  getUserProfile: async () => {
+    const response = await apiFetch(`${API_BASE_URL}/Auth/profile`);
+    return response.data;
+  },
+
+  /**
+   * Check if email is available
+   */
+  checkEmailAvailability: async (email) => {
+    const response = await apiFetch(`${API_BASE_URL}/Auth/check-email?email=${encodeURIComponent(email)}`);
     return response.data;
   },
 };

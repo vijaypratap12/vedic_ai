@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { 
   Search, 
   GraduationCap,
@@ -7,155 +7,111 @@ import {
   Star,
   Eye,
   Award,
-  Languages
+  Languages,
+  BookOpen,
+  ChevronLeft,
+  ChevronRight,
+  X
 } from 'lucide-react';
 import Reader from '../components/Reader';
+import apiService from '../services/api';
 
 const Textbooks = () => {
-  const [selectedLevel, setSelectedLevel] = useState('ug');
-  const [selectedSubject, setSelectedSubject] = useState('all');
+  const [selectedLevel, setSelectedLevel] = useState('all');
+  const [selectedCategory, setSelectedCategory] = useState('all');
   const [searchTerm, setSearchTerm] = useState('');
   const [readerOpen, setReaderOpen] = useState(false);
   const [selectedBook, setSelectedBook] = useState(null);
+  
+  // API state
+  const [books, setBooks] = useState([]);
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState(null);
+  const [currentPage, setCurrentPage] = useState(1);
+  const booksPerPage = 6;
 
-  const openReader = (book) => {
-    setSelectedBook(book);
+  // Fetch books on component mount
+  useEffect(() => {
+    fetchBooks();
+  }, []);
+
+  const fetchBooks = async () => {
+    try {
+      setLoading(true);
+      setError(null);
+      setCurrentPage(1);
+      setSearchTerm('');
+      const data = await apiService.getActiveBooks();
+      setBooks(data);
+    } catch (err) {
+      console.error('Error fetching books:', err);
+      setError(err.message || 'Failed to fetch books');
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  const handleSearch = async () => {
+    if (!searchTerm.trim()) {
+      fetchBooks();
+      return;
+    }
+
+    try {
+      setLoading(true);
+      setError(null);
+      setCurrentPage(1);
+      const data = await apiService.searchBooks(searchTerm);
+      setBooks(data);
+    } catch (err) {
+      setError(err.message || 'Search failed');
+      console.error('Error searching books:', err);
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  const openReader = (bookId, chapterNumber = 1) => {
+    setSelectedBook({ id: bookId, chapterNumber: chapterNumber });
     setReaderOpen(true);
   };
 
-  const textbookCategories = {
-    ug: {
-      title: 'BAMS Undergraduate Program',
-      description: 'NCISM-aligned textbooks for BAMS students',
-      books: [
-        {
-          id: 'ug-shalya-1',
-          title: 'Fundamentals of Shalya Tantra',
-          subtitle: 'Introduction to Ayurvedic Surgery',
-          author: 'Dr. Sameep Singh & Dr. Saurabh Kumar',
-          year: '1st Year',
-          chapters: 12,
-          pages: 280,
-          language: ['English', 'Hindi'],
-          downloadCount: 1250,
-          rating: 4.8,
-          topics: ['Basic Principles', 'History', 'Instruments', 'Anatomy'],
-          status: 'completed'
-        },
-        {
-          id: 'ug-shalya-2',
-          title: 'Practical Shalya Tantra',
-          subtitle: 'Clinical Applications & Procedures',
-          author: 'Dr. Sameep Singh & Dr. Saurabh Kumar',
-          year: '2nd Year',
-          chapters: 15,
-          pages: 350,
-          language: ['English', 'Hindi'],
-          downloadCount: 980,
-          rating: 4.7,
-          topics: ['Wound Management', 'Basic Procedures', 'Diagnosis'],
-          status: 'completed'
-        },
-        {
-          id: 'ug-shalya-3',
-          title: 'Advanced Shalya Tantra',
-          subtitle: 'Specialized Techniques & Modern Integration',
-          author: 'Dr. Sameep Singh & Dr. Saurabh Kumar',
-          year: '3rd Year',
-          chapters: 18,
-          pages: 420,
-          language: ['English', 'Hindi'],
-          downloadCount: 756,
-          rating: 4.9,
-          topics: ['Advanced Procedures', 'Modern Integration', 'Research'],
-          status: 'in-progress'
-        }
-      ]
-    },
-    pg: {
-      title: 'MS Shalya Tantra Postgraduate Program',
-      description: 'Comprehensive resources for MS Shalya Tantra scholars',
-      books: [
-        {
-          id: 'pg-shalya-1',
-          title: 'Classical Shalya Tantra',
-          subtitle: 'In-depth Study of Traditional Texts',
-          author: 'Dr. Saurabh Kumar & Team',
-          year: '1st Year PG',
-          chapters: 25,
-          pages: 650,
-          language: ['English', 'Sanskrit', 'Hindi'],
-          downloadCount: 445,
-          rating: 4.9,
-          topics: ['Classical Texts', 'Research Methodology', 'Advanced Theory'],
-          status: 'completed'
-        },
-        {
-          id: 'pg-shalya-2',
-          title: 'Modern Surgical Integration',
-          subtitle: 'Bridging Ancient Wisdom with Contemporary Practice',
-          author: 'Dr. Sameep Singh & Advisory Panel',
-          year: '2nd Year PG',
-          chapters: 20,
-          pages: 580,
-          language: ['English', 'Hindi'],
-          downloadCount: 312,
-          rating: 4.8,
-          topics: ['Modern Techniques', 'Clinical Research', 'Evidence-based Practice'],
-          status: 'completed'
-        },
-        {
-          id: 'pg-shalya-3',
-          title: 'Thesis & Research Guide',
-          subtitle: 'Complete Guide for PG Research',
-          author: 'Dr. Sameep Singh & Research Team',
-          year: 'Final Year PG',
-          chapters: 15,
-          pages: 320,
-          language: ['English'],
-          downloadCount: 278,
-          rating: 4.7,
-          topics: ['Research Design', 'Data Analysis', 'Publication'],
-          status: 'in-progress'
-        }
-      ]
+  // Filter books based on selected filters
+  const filteredBooks = books.filter(book => {
+    const matchesCategory = selectedCategory === 'all' || book.category === selectedCategory;
+    return matchesCategory;
+  });
+
+  // Pagination calculations
+  const totalPages = Math.ceil(filteredBooks.length / booksPerPage);
+  const indexOfLastBook = currentPage * booksPerPage;
+  const indexOfFirstBook = indexOfLastBook - booksPerPage;
+  const currentBooks = filteredBooks.slice(indexOfFirstBook, indexOfLastBook);
+
+  const goToNextPage = () => {
+    if (currentPage < totalPages) {
+      setCurrentPage(currentPage + 1);
+      window.scrollTo({ top: 0, behavior: 'smooth' });
     }
   };
 
-  const syllabusMapping = [
-    {
-      semester: 'UG - 1st Year',
-      subjects: ['Introduction to Shalya Tantra', 'Basic Anatomy', 'Fundamental Principles'],
-      completion: 100
-    },
-    {
-      semester: 'UG - 2nd Year', 
-      subjects: ['Practical Procedures', 'Wound Management', 'Clinical Diagnosis'],
-      completion: 100
-    },
-    {
-      semester: 'UG - 3rd Year',
-      subjects: ['Advanced Techniques', 'Modern Integration', 'Research Methods'],
-      completion: 75
-    },
-    {
-      semester: 'PG - 1st Year',
-      subjects: ['Classical Literature', 'Research Methodology', 'Advanced Theory'],
-      completion: 100
-    },
-    {
-      semester: 'PG - 2nd Year',
-      subjects: ['Clinical Practice', 'Modern Integration', 'Case Studies'],
-      completion: 85
-    },
-    {
-      semester: 'PG - Final Year',
-      subjects: ['Thesis Work', 'Research Project', 'Publication'],
-      completion: 60
+  const goToPreviousPage = () => {
+    if (currentPage > 1) {
+      setCurrentPage(currentPage - 1);
+      window.scrollTo({ top: 0, behavior: 'smooth' });
     }
-  ];
+  };
 
-  const currentBooks = textbookCategories[selectedLevel].books;
+  const goToPage = (pageNumber) => {
+    setCurrentPage(pageNumber);
+    window.scrollTo({ top: 0, behavior: 'smooth' });
+  };
+
+  // Calculate statistics
+  const totalChapters = books.reduce((sum, book) => sum + (book.totalChapters || 0), 0);
+  const avgRating = books.length > 0 
+    ? (books.reduce((sum, book) => sum + (book.rating || 4.5), 0) / books.length).toFixed(1) 
+    : '0.0';
 
   return (
     <div className="textbooks-page">
@@ -163,27 +119,11 @@ const Textbooks = () => {
       <section className="hero">
         <div className="container">
           <div className="hero-content text-center">
-            <h1>UG/PG Shalya Tantra Textbooks</h1>
+            <h1>Ayurvedic Textbooks Library</h1>
             <p>
-              Comprehensive NCISM-aligned educational content authored by leading Ayurvedic surgeons, 
+              Comprehensive educational content authored by leading Ayurvedic scholars, 
               available in multiple languages with interactive features.
             </p>
-            <div className="level-switcher">
-              <button 
-                className={`btn ${selectedLevel === 'ug' ? 'btn-primary' : 'btn-outline'}`}
-                onClick={() => setSelectedLevel('ug')}
-              >
-                <GraduationCap size={20} />
-                BAMS (UG)
-              </button>
-              <button 
-                className={`btn ${selectedLevel === 'pg' ? 'btn-primary' : 'btn-outline'}`}
-                onClick={() => setSelectedLevel('pg')}
-              >
-                <Award size={20} />
-                MS Shalya Tantra (PG)
-              </button>
-            </div>
           </div>
         </div>
       </section>
@@ -191,203 +131,401 @@ const Textbooks = () => {
       {/* Search and Filter */}
       <section className="section">
         <div className="container">
-          <div className="search-filter-section">
-            <div className="search-box">
-              <Search className="search-icon" size={20} />
-              <input
-                type="text"
-                placeholder="Search textbooks, topics, or authors..."
-                className="search-input"
-                value={searchTerm}
-                onChange={(e) => setSearchTerm(e.target.value)}
-              />
-            </div>
-            <div className="filter-options">
-              <select 
-                className="form-control"
-                value={selectedSubject}
-                onChange={(e) => setSelectedSubject(e.target.value)}
+          <div className="search-navigation">
+            <div className="search-box" style={{ position: 'relative', display: 'flex', alignItems: 'center', gap: '10px' }}>
+              <div style={{ position: 'relative', flex: 1 }}>
+                <Search className="search-icon" size={20} />
+                <input
+                  type="text"
+                  placeholder="Search textbooks, topics, or authors..."
+                  className="search-input"
+                  value={searchTerm}
+                  onChange={(e) => setSearchTerm(e.target.value)}
+                  onKeyPress={(e) => e.key === 'Enter' && handleSearch()}
+                  style={{ paddingRight: searchTerm ? '40px' : '20px' }}
+                />
+                {searchTerm && (
+                  <button
+                    onClick={() => {
+                      setSearchTerm('');
+                      fetchBooks();
+                    }}
+                    style={{
+                      position: 'absolute',
+                      right: '15px',
+                      top: '50%',
+                      transform: 'translateY(-50%)',
+                      background: 'transparent',
+                      border: 'none',
+                      cursor: 'pointer',
+                      color: 'var(--text-secondary)',
+                      display: 'flex',
+                      alignItems: 'center',
+                      justifyContent: 'center',
+                      padding: '4px',
+                      borderRadius: '50%',
+                      transition: 'all 0.3s ease'
+                    }}
+                    onMouseEnter={(e) => {
+                      e.currentTarget.style.background = 'rgba(0, 212, 255, 0.1)';
+                      e.currentTarget.style.color = 'var(--primary-color)';
+                    }}
+                    onMouseLeave={(e) => {
+                      e.currentTarget.style.background = 'transparent';
+                      e.currentTarget.style.color = 'var(--text-secondary)';
+                    }}
+                    title="Clear search"
+                  >
+                    <X size={18} />
+                  </button>
+                )}
+              </div>
+              <button 
+                className="btn btn-primary btn-small" 
+                onClick={handleSearch}
               >
-                <option value="all">All Subjects</option>
-                <option value="theory">Theoretical</option>
-                <option value="practical">Practical</option>
-                <option value="research">Research</option>
-              </select>
+                Search
+              </button>
             </div>
           </div>
+
+          {/* Loading and Error States */}
+          {loading && (
+            <div style={{ textAlign: 'center', padding: '20px' }}>
+              <p>Loading textbooks...</p>
+            </div>
+          )}
+          
+          {error && (
+            <div style={{ textAlign: 'center', padding: '20px', color: '#e74c3c' }}>
+              <p>⚠️ {error}</p>
+              <button className="btn btn-outline btn-small" onClick={fetchBooks}>
+                Retry
+              </button>
+            </div>
+          )}
         </div>
       </section>
 
-      {/* Current Level Overview */}
-      <section className="section section-alt">
-        <div className="container">
-          <div className="level-overview">
-            <div className="overview-header">
-              <h2>{textbookCategories[selectedLevel].title}</h2>
-              <p>{textbookCategories[selectedLevel].description}</p>
-            </div>
-            <div className="overview-stats">
-              <div className="stat-grid">
-                <div className="stat-item">
-                  <span className="stat-number">{currentBooks.length}</span>
-                  <span className="stat-label">Textbooks</span>
-                </div>
-                <div className="stat-item">
-                  <span className="stat-number">
-                    {currentBooks.reduce((sum, book) => sum + book.chapters, 0)}
-                  </span>
-                  <span className="stat-label">Total Chapters</span>
-                </div>
-                <div className="stat-item">
-                  <span className="stat-number">
-                    {(currentBooks.reduce((sum, book) => sum + book.rating, 0) / currentBooks.length).toFixed(1)}
-                  </span>
-                  <span className="stat-label">Avg Rating</span>
-                </div>
+      {/* Statistics Overview - Single Line */}
+      {!loading && !error && books.length > 0 && (
+        <section className="section section-alt">
+          <div className="container">
+            <div style={{ 
+              display: 'flex', 
+              justifyContent: 'center', 
+              alignItems: 'center',
+              gap: '4rem',
+              flexWrap: 'wrap',
+              padding: '2rem 0'
+            }}>
+              <div className="stat-item" style={{ textAlign: 'center' }}>
+                <span className="stat-number" style={{ fontSize: '2.5rem', fontWeight: 'bold', color: 'var(--primary-color)' }}>
+                  {books.length}
+                </span>
+                <span className="stat-label" style={{ display: 'block', marginTop: '0.5rem', color: 'var(--text-secondary)' }}>
+                  Textbooks
+                </span>
+              </div>
+              <div className="stat-item" style={{ textAlign: 'center' }}>
+                <span className="stat-number" style={{ fontSize: '2.5rem', fontWeight: 'bold', color: 'var(--primary-color)' }}>
+                  {totalChapters}
+                </span>
+                <span className="stat-label" style={{ display: 'block', marginTop: '0.5rem', color: 'var(--text-secondary)' }}>
+                  Total Chapters
+                </span>
+              </div>
+              <div className="stat-item" style={{ textAlign: 'center' }}>
+                <span className="stat-number" style={{ fontSize: '2.5rem', fontWeight: 'bold', color: 'var(--primary-color)' }}>
+                  {avgRating}
+                </span>
+                <span className="stat-label" style={{ display: 'block', marginTop: '0.5rem', color: 'var(--text-secondary)' }}>
+                  Avg Rating
+                </span>
               </div>
             </div>
           </div>
-        </div>
-      </section>
+        </section>
+      )}
 
       {/* Textbooks Grid */}
-      <section className="section">
-        <div className="container">
-          <div className="content-header">
-            <h2>Available Textbooks</h2>
-            <p>Download and access comprehensive study materials</p>
-          </div>
-          
-          <div className="textbooks-grid">
-            {currentBooks.map((book) => (
-              <div key={book.id} className="textbook-card card">
-                <div className="book-header">
-                  <div className="book-status">
-                    {book.status === 'completed' ? (
-                      <span className="badge badge-success">
-                        <CheckCircle size={14} />
-                        Complete
-                      </span>
-                    ) : (
-                      <span className="badge badge-warning">
-                        <Clock size={14} />
-                        In Progress
-                      </span>
+      {!loading && !error && filteredBooks.length > 0 && (
+        <section className="section">
+          <div className="container">
+            <div className="content-header">
+              <h2>Available Textbooks</h2>
+              <p>Explore comprehensive study materials from our digital library</p>
+            </div>
+
+            {/* Category Filter */}
+            <div style={{ 
+              display: 'flex', 
+              justifyContent: 'center', 
+              gap: '10px',
+              marginBottom: '30px',
+              flexWrap: 'wrap'
+            }}>
+              <button 
+                className={`btn ${selectedCategory === 'all' ? 'btn-primary' : 'btn-outline'} btn-small`}
+                onClick={() => {
+                  setSelectedCategory('all');
+                  setCurrentPage(1);
+                }}
+              >
+                All Categories
+              </button>
+              <button 
+                className={`btn ${selectedCategory === 'Ayurveda' ? 'btn-primary' : 'btn-outline'} btn-small`}
+                onClick={() => {
+                  setSelectedCategory('Ayurveda');
+                  setCurrentPage(1);
+                }}
+              >
+                Ayurveda
+              </button>
+              <button 
+                className={`btn ${selectedCategory === 'Surgery' ? 'btn-primary' : 'btn-outline'} btn-small`}
+                onClick={() => {
+                  setSelectedCategory('Surgery');
+                  setCurrentPage(1);
+                }}
+              >
+                Surgery
+              </button>
+              <button 
+                className={`btn ${selectedCategory === 'Medicine' ? 'btn-primary' : 'btn-outline'} btn-small`}
+                onClick={() => {
+                  setSelectedCategory('Medicine');
+                  setCurrentPage(1);
+                }}
+              >
+                Medicine
+              </button>
+            </div>
+            
+            <div className="grid grid-3" style={{ alignItems: 'stretch' }}>
+              {currentBooks.map((book) => (
+                <div 
+                  key={book.id} 
+                  className="featured-card card"
+                  style={{
+                    display: 'flex',
+                    flexDirection: 'column',
+                    height: '100%'
+                  }}
+                >
+                  <div className="card-header" style={{ minHeight: '80px' }}>
+                    <h4>{book.title}</h4>
+                    <p className="subtitle">by {book.author}</p>
+                  </div>
+                  
+                  <p style={{ flex: '1', color: 'var(--text-secondary)', lineHeight: '1.6' }}>
+                    {book.description || 'Comprehensive Ayurvedic textbook with detailed explanations'}
+                  </p>
+                  
+                  <div style={{ 
+                    display: 'flex', 
+                    gap: '15px',
+                    marginTop: '1rem',
+                    marginBottom: '1rem',
+                    fontSize: '0.9rem',
+                    color: 'var(--text-secondary)',
+                    flexWrap: 'wrap'
+                  }}>
+                    {book.totalChapters > 0 && (
+                      <span>📚 {book.totalChapters} Chapters</span>
+                    )}
+                    {book.category && (
+                      <span>🏷️ {book.category}</span>
+                    )}
+                    {book.language && (
+                      <span>🌐 {book.language}</span>
                     )}
                   </div>
-                  <div className="book-rating">
-                    <Star size={16} fill="currentColor" />
-                    <span>{book.rating}</span>
-                  </div>
-                </div>
 
-                <div className="book-content">
-                  <h3>{book.title}</h3>
-                  <p className="book-subtitle">{book.subtitle}</p>
-                  <p className="book-author">by {book.author}</p>
-                  
-                  <div className="book-details">
-                    <div className="detail-item">
-                      <span className="detail-label">Year:</span>
-                      <span>{book.year}</span>
-                    </div>
-                    <div className="detail-item">
-                      <span className="detail-label">Chapters:</span>
-                      <span>{book.chapters}</span>
-                    </div>
-                    <div className="detail-item">
-                      <span className="detail-label">Pages:</span>
-                      <span>{book.pages}</span>
-                    </div>
-                  </div>
-
-                  <div className="book-languages">
-                    <span className="detail-label">Languages:</span>
-                    <div className="language-tags">
-                      {book.language.map((lang, index) => (
-                        <span key={index} className="language-tag">
-                          {lang}
-                        </span>
-                      ))}
-                    </div>
-                  </div>
-
-                  <div className="book-topics">
-                    <span className="detail-label">Topics:</span>
-                    <div className="topic-tags">
-                      {book.topics.map((topic, index) => (
-                        <span key={index} className="topic-tag">
-                          {topic}
-                        </span>
-                      ))}
-                    </div>
-                  </div>
-
-                </div>
-
-                <div className="book-actions">
-                  <button 
-                    className="btn btn-primary"
-                    onClick={() => openReader(book)}
-                  >
-                    <Eye size={16} />
-                    Read Online
-                  </button>
-                  <button className="btn btn-outline">
-                    <Languages size={16} />
-                    Audio Version
-                  </button>
-                </div>
-              </div>
-            ))}
-          </div>
-        </div>
-      </section>
-
-      {/* NCISM Syllabus Mapping */}
-      <section className="section section-alt">
-        <div className="container">
-          <div className="content-header">
-            <h2>NCISM Syllabus Alignment</h2>
-            <p>Track your progress against the official curriculum</p>
-          </div>
-          
-          <div className="syllabus-mapping">
-            <div className="mapping-grid">
-              {syllabusMapping.map((semester, index) => (
-                <div key={index} className="semester-card card">
-                  <div className="semester-header">
-                    <h4>{semester.semester}</h4>
-                    <div className="completion-badge">
-                      <span className={`badge ${
-                        semester.completion === 100 ? 'badge-success' :
-                        semester.completion >= 75 ? 'badge-warning' : 'badge-info'
-                      }`}>
-                        {semester.completion}% Complete
-                      </span>
-                    </div>
+                  <div className="chapter-reference">
+                    <small>
+                      {book.publicationYear && `Year: ${book.publicationYear}`}
+                      {book.isbn && ` • ISBN: ${book.isbn}`}
+                    </small>
                   </div>
                   
-                  <div className="progress-bar">
-                    <div 
-                      className="progress-fill" 
-                      style={{ width: `${semester.completion}%` }}
-                    ></div>
-                  </div>
-                  
-                  <div className="semester-subjects">
-                    <h5>Key Subjects:</h5>
-                    <ul>
-                      {semester.subjects.map((subject, subIndex) => (
-                        <li key={subIndex}>
-                          <CheckCircle size={14} />
-                          {subject}
-                        </li>
-                      ))}
-                    </ul>
+                  <div className="card-actions" style={{ marginTop: '1rem', display: 'flex', gap: '10px' }}>
+                    <button 
+                      className="btn btn-primary btn-small"
+                      onClick={() => openReader(book.id)}
+                      style={{ flex: 1 }}
+                    >
+                      <BookOpen size={16} />
+                      Read Book
+                    </button>
+                    <button 
+                      className="btn btn-outline btn-small"
+                      onClick={() => alert('Audio version coming soon!')}
+                      style={{ flex: 1 }}
+                    >
+                      <Languages size={16} />
+                      Audio
+                    </button>
                   </div>
                 </div>
               ))}
+            </div>
+
+            {/* Pagination Controls */}
+            {totalPages > 1 && (
+              <div style={{ 
+                display: 'flex', 
+                justifyContent: 'center', 
+                alignItems: 'center',
+                gap: '20px',
+                marginTop: '40px',
+                flexWrap: 'wrap'
+              }}>
+                {/* Previous Button */}
+                <button
+                  onClick={goToPreviousPage}
+                  disabled={currentPage === 1}
+                  className="btn btn-outline btn-small"
+                  style={{
+                    display: 'flex',
+                    alignItems: 'center',
+                    gap: '8px',
+                    opacity: currentPage === 1 ? 0.5 : 1,
+                    cursor: currentPage === 1 ? 'not-allowed' : 'pointer'
+                  }}
+                >
+                  <ChevronLeft size={18} />
+                  Previous
+                </button>
+
+                {/* Page Dots */}
+                <div style={{ 
+                  display: 'flex', 
+                  gap: '10px', 
+                  alignItems: 'center' 
+                }}>
+                  {Array.from({ length: totalPages }, (_, index) => (
+                    <button
+                      key={index + 1}
+                      onClick={() => goToPage(index + 1)}
+                      style={{
+                        width: currentPage === index + 1 ? '40px' : '12px',
+                        height: '12px',
+                        borderRadius: '6px',
+                        border: 'none',
+                        background: currentPage === index + 1 
+                          ? 'linear-gradient(135deg, var(--primary-color), var(--secondary-color))'
+                          : 'var(--border-color)',
+                        cursor: 'pointer',
+                        transition: 'all 0.3s ease',
+                        boxShadow: currentPage === index + 1 
+                          ? '0 0 10px rgba(0, 212, 255, 0.5)'
+                          : 'none'
+                      }}
+                      title={`Page ${index + 1}`}
+                    />
+                  ))}
+                </div>
+
+                {/* Next Button */}
+                <button
+                  onClick={goToNextPage}
+                  disabled={currentPage === totalPages}
+                  className="btn btn-outline btn-small"
+                  style={{
+                    display: 'flex',
+                    alignItems: 'center',
+                    gap: '8px',
+                    opacity: currentPage === totalPages ? 0.5 : 1,
+                    cursor: currentPage === totalPages ? 'not-allowed' : 'pointer'
+                  }}
+                >
+                  Next
+                  <ChevronRight size={18} />
+                </button>
+              </div>
+            )}
+
+            {/* Books Count Info */}
+            <div style={{ 
+              textAlign: 'center', 
+              marginTop: '20px',
+              color: 'var(--text-secondary)',
+              fontSize: '0.95rem'
+            }}>
+              <p>
+                Showing {indexOfFirstBook + 1}-{Math.min(indexOfLastBook, filteredBooks.length)} of {filteredBooks.length} textbooks
+                {searchTerm && ` for "${searchTerm}"`}
+              </p>
+            </div>
+          </div>
+        </section>
+      )}
+
+      {/* No books found */}
+      {!loading && !error && filteredBooks.length === 0 && (
+        <section className="section">
+          <div className="container">
+            <div style={{ textAlign: 'center', padding: '40px' }}>
+              <p style={{ fontSize: '1.2rem', color: '#666' }}>
+                No textbooks found. {searchTerm && 'Try a different search term or '}
+                <button 
+                  className="btn btn-primary btn-small" 
+                  onClick={fetchBooks}
+                  style={{ marginLeft: '10px' }}
+                >
+                  View All Books
+                </button>
+              </p>
+            </div>
+          </div>
+        </section>
+      )}
+
+      {/* Study Tools */}
+      <section className="section section-alt">
+        <div className="container">
+          <div className="content-header">
+            <h2>Study Tools & Resources</h2>
+            <p>Enhanced learning experience with modern tools</p>
+          </div>
+          
+          <div className="grid grid-4">
+            <div className="tool-card card">
+              <div className="card-icon">
+                <Languages size={24} />
+              </div>
+              <h4>Multi-language Support</h4>
+              <p>Read textbooks in Sanskrit, Hindi, and English translations</p>
+              <button className="btn btn-outline btn-small">Explore</button>
+            </div>
+            
+            <div className="tool-card card">
+              <div className="card-icon">
+                <GraduationCap size={24} />
+              </div>
+              <h4>Interactive Learning</h4>
+              <p>Engage with quizzes and assessments for better retention</p>
+              <button className="btn btn-outline btn-small">Start</button>
+            </div>
+            
+            <div className="tool-card card">
+              <div className="card-icon">
+                <BookOpen size={24} />
+              </div>
+              <h4>Chapter Notes</h4>
+              <p>Add your own annotations and bookmarks to chapters</p>
+              <button className="btn btn-outline btn-small">Try Now</button>
+            </div>
+            
+            <div className="tool-card card">
+              <div className="card-icon">
+                <Star size={24} />
+              </div>
+              <h4>Progress Tracking</h4>
+              <p>Monitor your reading progress and learning milestones</p>
+              <button className="btn btn-outline btn-small">View Stats</button>
             </div>
           </div>
         </div>
@@ -396,13 +534,15 @@ const Textbooks = () => {
       {/* Reader Component */}
       <Reader
         isOpen={readerOpen}
-        onClose={() => setReaderOpen(false)}
-        title={selectedBook?.title || 'Textbook'}
-        author={selectedBook?.author || ''}
-        content={null}
+        onClose={() => {
+          setReaderOpen(false);
+          setSelectedBook(null);
+        }}
+        bookId={selectedBook?.id}
+        initialChapter={selectedBook?.chapterNumber || 1}
       />
     </div>
   );
 };
 
-export default Textbooks; 
+export default Textbooks;
