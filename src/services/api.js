@@ -274,6 +274,146 @@ const apiService = {
     const response = await apiFetch(`${API_BASE_URL}/Auth/check-email?email=${encodeURIComponent(email)}`);
     return response.data;
   },
+
+  // ==========================================
+  // RESEARCH PAPERS API
+  // ==========================================
+
+  /**
+   * Get all research papers
+   */
+  getAllResearchPapers: async () => {
+    const response = await apiFetch(`${API_BASE_URL}/ResearchPapers`);
+    return response.data;
+  },
+
+  /**
+   * Get featured research papers
+   */
+  getFeaturedResearchPapers: async (count = 3) => {
+    const response = await apiFetch(`${API_BASE_URL}/ResearchPapers/featured?count=${count}`);
+    return response.data;
+  },
+
+  /**
+   * Get research paper by ID
+   */
+  getResearchPaperById: async (id) => {
+    const response = await apiFetch(`${API_BASE_URL}/ResearchPapers/${id}`);
+    return response.data;
+  },
+
+  /**
+   * Get research papers by category
+   */
+  getResearchPapersByCategory: async (category) => {
+    const response = await apiFetch(`${API_BASE_URL}/ResearchPapers/category/${encodeURIComponent(category)}`);
+    return response.data;
+  },
+
+  /**
+   * Get research papers by year
+   */
+  getResearchPapersByYear: async (year) => {
+    const response = await apiFetch(`${API_BASE_URL}/ResearchPapers/year/${year}`);
+    return response.data;
+  },
+
+  /**
+   * Get research papers by institution
+   */
+  getResearchPapersByInstitution: async (institution) => {
+    const response = await apiFetch(`${API_BASE_URL}/ResearchPapers/institution/${encodeURIComponent(institution)}`);
+    return response.data;
+  },
+
+  /**
+   * Search research papers
+   */
+  searchResearchPapers: async (searchTerm) => {
+    const response = await apiFetch(`${API_BASE_URL}/ResearchPapers/search?searchTerm=${encodeURIComponent(searchTerm)}`);
+    return response.data;
+  },
+
+  /**
+   * Increment research paper download count
+   */
+  incrementResearchPaperDownload: async (id) => {
+    const response = await apiFetch(`${API_BASE_URL}/ResearchPapers/${id}/download`, {
+      method: 'POST',
+    });
+    return response.data;
+  },
+
+  // ==========================================
+  // THESIS API
+  // ==========================================
+
+  /**
+   * Get all thesis
+   */
+  getAllThesis: async () => {
+    const response = await apiFetch(`${API_BASE_URL}/Thesis`);
+    return response.data;
+  },
+
+  /**
+   * Get featured thesis
+   */
+  getFeaturedThesis: async (count = 3) => {
+    const response = await apiFetch(`${API_BASE_URL}/Thesis/featured?count=${count}`);
+    return response.data;
+  },
+
+  /**
+   * Get thesis by ID
+   */
+  getThesisById: async (id) => {
+    const response = await apiFetch(`${API_BASE_URL}/Thesis/${id}`);
+    return response.data;
+  },
+
+  /**
+   * Get thesis by category
+   */
+  getThesisByCategory: async (category) => {
+    const response = await apiFetch(`${API_BASE_URL}/Thesis/category/${encodeURIComponent(category)}`);
+    return response.data;
+  },
+
+  /**
+   * Get thesis by year
+   */
+  getThesisByYear: async (year) => {
+    const response = await apiFetch(`${API_BASE_URL}/Thesis/year/${year}`);
+    return response.data;
+  },
+
+  /**
+   * Get thesis by institution
+   */
+  getThesisByInstitution: async (institution) => {
+    const response = await apiFetch(`${API_BASE_URL}/Thesis/institution/${encodeURIComponent(institution)}`);
+    return response.data;
+  },
+
+  /**
+   * Search thesis
+   */
+  searchThesis: async (searchTerm) => {
+    const response = await apiFetch(`${API_BASE_URL}/Thesis/search?searchTerm=${encodeURIComponent(searchTerm)}`);
+    return response.data;
+  },
+
+  /**
+   * Increment thesis download count
+   */
+  incrementThesisDownload: async (id) => {
+    const response = await apiFetch(`${API_BASE_URL}/Thesis/${id}/download`, {
+      method: 'POST',
+    });
+    return response.data;
+  },
 };
 
 export default apiService;

@@ -16,7 +16,16 @@ import {
 } from 'lucide-react';
 import apiService from '../services/api';
 
-const Reader = ({ isOpen, onClose, bookId, initialChapter = 1 }) => {
+const Reader = ({ 
+  isOpen, 
+  onClose, 
+  bookId, 
+  initialChapter = 1,
+  // Simple content mode props (for research papers/thesis)
+  title,
+  author,
+  content
+}) => {
   const [fontSize, setFontSize] = useState(18);
   const [theme, setTheme] = useState('night');
   const [isFullscreen, setIsFullscreen] = useState(false);
@@ -31,6 +40,9 @@ const Reader = ({ isOpen, onClose, bookId, initialChapter = 1 }) => {
   const [bookInfo, setBookInfo] = useState(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
+
+  // Determine mode: simple content (research/thesis) or book with chapters
+  const isSimpleMode = !bookId && (title || content);
 
   // Theme configurations
   const themes = {
@@ -88,19 +100,26 @@ const Reader = ({ isOpen, onClose, bookId, initialChapter = 1 }) => {
     }
   }, [bookId]);
 
-  // Fetch book with chapters on mount
+  // Fetch book with chapters on mount (only in book mode)
   useEffect(() => {
-    if (isOpen && bookId) {
+    if (isOpen && bookId && !isSimpleMode) {
       fetchBookWithChapters();
     }
-  }, [isOpen, bookId, fetchBookWithChapters]);
+  }, [isOpen, bookId, isSimpleMode, fetchBookWithChapters]);
 
-  // Fetch specific chapter when chapter number changes
+  // Fetch specific chapter when chapter number changes (only in book mode)
   useEffect(() => {
-    if (isOpen && bookId && initialChapter) {
+    if (isOpen && bookId && initialChapter && !isSimpleMode) {
       fetchChapter(initialChapter);
     }
-  }, [isOpen, bookId, initialChapter, fetchChapter]);
+  }, [isOpen, bookId, initialChapter, isSimpleMode, fetchChapter]);
+
+  // In simple mode, set loading to false immediately
+  useEffect(() => {
+    if (isOpen && isSimpleMode) {
+      setLoading(false);
+    }
+  }, [isOpen, isSimpleMode]);
 
   const handleNextChapter = useCallback(async () => {
     if (!currentChapter || !currentChapter.hasNextChapter) return;
@@ -199,9 +218,14 @@ const Reader = ({ isOpen, onClose, bookId, initialChapter = 1 }) => {
             <BookOpen size={20} style={{ color: currentTheme.accent }} />
             <div>
               <h3 style={{ color: currentTheme.text }}>
-                {currentChapter ? currentChapter.bookTitle : bookInfo?.title || 'Loading...'}
+                {isSimpleMode 
+                  ? title 
+                  : (currentChapter ? currentChapter.bookTitle : bookInfo?.title || 'Loading...')}
               </h3>
-              {currentChapter && (
+              {isSimpleMode && author && (
+                <p style={{ color: currentTheme.secondary }}>By {author}</p>
+              )}
+              {!isSimpleMode && currentChapter && (
                 <p style={{ color: currentTheme.secondary }}>
                   Chapter {currentChapter.chapterNumber}: {currentChapter.chapterTitle}
                 </p>
@@ -210,15 +234,17 @@ const Reader = ({ isOpen, onClose, bookId, initialChapter = 1 }) => {
           </div>
           
           <div className="reader-controls">
-            {/* Chapter List Toggle */}
-            <button 
-              className={`control-btn ${showChapterList ? 'active' : ''}`}
-              onClick={() => setShowChapterList(!showChapterList)}
-              style={{ color: currentTheme.text }}
-              title="Chapter list"
-            >
-              <List size={18} />
-            </button>
+            {/* Chapter List Toggle - Only show in book mode */}
+            {!isSimpleMode && (
+              <button 
+                className={`control-btn ${showChapterList ? 'active' : ''}`}
+                onClick={() => setShowChapterList(!showChapterList)}
+                style={{ color: currentTheme.text }}
+                title="Chapter list"
+              >
+                <List size={18} />
+              </button>
+            )}
 
             {/* Theme Selector */}
             <div className="theme-selector">
@@ -259,15 +285,17 @@ const Reader = ({ isOpen, onClose, bookId, initialChapter = 1 }) => {
               </button>
             </div>
 
-            {/* Additional Controls */}
-            <button 
-              className={`control-btn ${currentChapter && bookmarks.includes(currentChapter.chapterNumber) ? 'active' : ''}`}
-              onClick={toggleBookmark}
-              style={{ color: currentChapter && bookmarks.includes(currentChapter.chapterNumber) ? currentTheme.accent : currentTheme.text }}
-              title="Bookmark this chapter"
-            >
-              <Bookmark size={18} fill={currentChapter && bookmarks.includes(currentChapter.chapterNumber) ? 'currentColor' : 'none'} />
-            </button>
+            {/* Additional Controls - Only show bookmark in book mode */}
+            {!isSimpleMode && (
+              <button 
+                className={`control-btn ${currentChapter && bookmarks.includes(currentChapter.chapterNumber) ? 'active' : ''}`}
+                onClick={toggleBookmark}
+                style={{ color: currentChapter && bookmarks.includes(currentChapter.chapterNumber) ? currentTheme.accent : currentTheme.text }}
+                title="Bookmark this chapter"
+              >
+                <Bookmark size={18} fill={currentChapter && bookmarks.includes(currentChapter.chapterNumber) ? 'currentColor' : 'none'} />
+              </button>
+            )}
 
             <button 
               className="control-btn"
@@ -291,8 +319,8 @@ const Reader = ({ isOpen, onClose, bookId, initialChapter = 1 }) => {
 
         {/* Main Content Area */}
         <div className="reader-main">
-          {/* Chapter List Sidebar */}
-          {showChapterList && (
+          {/* Chapter List Sidebar - Only in book mode */}
+          {!isSimpleMode && showChapterList && (
             <div 
               className="chapter-list-panel"
               style={{ 
@@ -360,9 +388,27 @@ const Reader = ({ isOpen, onClose, bookId, initialChapter = 1 }) => {
             ) : error ? (
               <div className="reader-error" style={{ color: currentTheme.accent }}>
                 <p>{error}</p>
-                <button onClick={() => fetchChapter(initialChapter)}>Retry</button>
+                {!isSimpleMode && (
+                  <button onClick={() => fetchChapter(initialChapter)}>Retry</button>
+                )}
               </div>
+            ) : isSimpleMode ? (
+              /* Simple content mode - for research papers/thesis */
+              content ? (
+                <div className="reader-page">
+                  <div 
+                    className="chapter-content"
+                    dangerouslySetInnerHTML={{ __html: content }}
+                    style={{ color: currentTheme.text }}
+                  />
+                </div>
+              ) : (
+                <div className="reader-empty" style={{ color: currentTheme.secondary }}>
+                  <p>No content available</p>
+                </div>
+              )
             ) : currentChapter ? (
+              /* Book mode - with chapters */
               <div className="reader-page">
                 <div className="chapter-header">
                   <h2 style={{ color: currentTheme.accent }}>
@@ -478,46 +524,57 @@ const Reader = ({ isOpen, onClose, bookId, initialChapter = 1 }) => {
           )}
         </div>
 
-        {/* Footer Navigation */}
-        <div className="reader-footer" style={{ borderTopColor: currentTheme.secondary + '40' }}>
-          <div className="page-navigation">
-            <button 
-              onClick={handlePreviousChapter}
-              disabled={!currentChapter || !currentChapter.hasPreviousChapter || loading}
-              style={{ 
-                color: currentTheme.text,
-                opacity: (!currentChapter || !currentChapter.hasPreviousChapter || loading) ? 0.5 : 1
-              }}
-            >
-              <ChevronLeft size={20} />
-              Previous Chapter
-            </button>
-            
-            <div className="page-info" style={{ color: currentTheme.secondary }}>
-              {currentChapter ? (
-                <>Chapter {currentChapter.chapterNumber} of {bookInfo?.totalChapters || chapters.length}</>
-              ) : (
-                <>Loading...</>
-              )}
+        {/* Footer Navigation - Only show in book mode */}
+        {!isSimpleMode && (
+          <div className="reader-footer" style={{ borderTopColor: currentTheme.secondary + '40' }}>
+            <div className="page-navigation">
+              <button 
+                onClick={handlePreviousChapter}
+                disabled={!currentChapter || !currentChapter.hasPreviousChapter || loading}
+                style={{ 
+                  color: currentTheme.text,
+                  opacity: (!currentChapter || !currentChapter.hasPreviousChapter || loading) ? 0.5 : 1
+                }}
+              >
+                <ChevronLeft size={20} />
+                Previous Chapter
+              </button>
+              
+              <div className="page-info" style={{ color: currentTheme.secondary }}>
+                {currentChapter ? (
+                  <>Chapter {currentChapter.chapterNumber} of {bookInfo?.totalChapters || chapters.length}</>
+                ) : (
+                  <>Loading...</>
+                )}
+              </div>
+              
+              <button 
+                onClick={handleNextChapter}
+                disabled={!currentChapter || !currentChapter.hasNextChapter || loading}
+                style={{ 
+                  color: currentTheme.text,
+                  opacity: (!currentChapter || !currentChapter.hasNextChapter || loading) ? 0.5 : 1
+                }}
+              >
+                Next Chapter
+                <ChevronRight size={20} />
+              </button>
             </div>
-            
-            <button 
-              onClick={handleNextChapter}
-              disabled={!currentChapter || !currentChapter.hasNextChapter || loading}
-              style={{ 
-                color: currentTheme.text,
-                opacity: (!currentChapter || !currentChapter.hasNextChapter || loading) ? 0.5 : 1
-              }}
-            >
-              Next Chapter
-              <ChevronRight size={20} />
-            </button>
-          </div>
 
-          <div className="reader-shortcuts" style={{ color: currentTheme.secondary }}>
-            <span>Shortcuts: ← → Navigate | Ctrl + / - Zoom | Esc Close</span>
+            <div className="reader-shortcuts" style={{ color: currentTheme.secondary }}>
+              <span>Shortcuts: ← → Navigate | Ctrl + / - Zoom | Esc Close</span>
+            </div>
           </div>
-        </div>
+        )}
+        
+        {/* Simple footer for simple mode */}
+        {isSimpleMode && (
+          <div className="reader-footer" style={{ borderTopColor: currentTheme.secondary + '40' }}>
+            <div className="reader-shortcuts" style={{ color: currentTheme.secondary, textAlign: 'center' }}>
+              <span>Shortcuts: Ctrl + / - Zoom | Esc Close</span>
+            </div>
+          </div>
+        )}
       </div>
     </div>
   );
